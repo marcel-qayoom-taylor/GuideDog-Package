@@ -1,7 +1,7 @@
 from openai import OpenAI
 # this has squiggle but env still works so idk man
 from dotenv import load_dotenv
-import os
+import subprocess  # for opening files in VSCode
 
 # Load environment variables from .env file
 load_dotenv()
@@ -12,18 +12,32 @@ html_file_path = "index.html"
 with open(html_file_path, 'r') as file:
     html_content = file.read()
 
-prompt = f"Please make the following HTML more semantic and accessible. Consider using header tags instead of just <p> or using <section>/<article> instead of <div> where appropriate. Here is the HTML content:\n\n{html_content}"
+prompt = f"Please make the following HTML more semantic and accessible. Consider using header tags instead of just <p> or using <section>/<article> instead of <div> where appropriate. Do not response with any other words or content EXCEPT for the html code. Also do not include ```html at the start or ``` at the end. This is extremely important. Here is the HTML content:\n\n{html_content}"
 
 # Send the prompt to the ChatGPT API
 completion = client.chat.completions.create(
-    model="gpt-3.5-turbo",
+    model="gpt-4o-mini",
     messages=[
-        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "system", "content": "You are a front-end developer that is an expert in semantic HTML. You are helping a colleague improve the semantic structure of their HTML code to make it more accessible. You are not allowed to change any content or words in the HTML code except for the HTML tags and the attributes of those tags. You can also add new tags or attributes where necessary."},
         {"role": "user", "content": prompt}
     ]
 )
 
-# Print the response
-print(completion.choices[0].message.content)
+response = completion.choices[0].message.content
 
+print(f'response is:\n {response}')
 
+# Overwrite the index.html file with the new HTML content
+with open(html_file_path, 'w') as file:
+    file.write(response)
+
+print(f'The file {html_file_path} has been updated successfully.')
+
+# Open the file in VSCode with side-by-side diff view
+try:
+    subprocess.run(['code', '--diff', html_file_path, html_file_path], check=True)
+    print(f'Opened {html_file_path} in VSCode with side-by-side diff view.')
+except subprocess.CalledProcessError:
+    print('Failed to open VSCode. Make sure VSCode is installed and "code" command is in your PATH.')
+except FileNotFoundError:
+    print('The "code" command was not found. Make sure VSCode is installed and "code" command is in your PATH.')
