@@ -1,10 +1,6 @@
 from openai import OpenAI
 # this has squiggle but env still works so idk man
-from dotenv import load_dotenv
 import subprocess  # for opening files in VSCode
-
-# Load environment variables from .env file
-load_dotenv()
 
 client = OpenAI()
 
@@ -33,11 +29,11 @@ with open(html_file_path, 'w') as file:
 
 print(f'The file {html_file_path} has been updated successfully.')
 
-# Open the file in VSCode with side-by-side diff view
+# Open the working tree changes in VSCode
 try:
-    subprocess.run(['code', '--diff', html_file_path, html_file_path], check=True)
-    print(f'Opened {html_file_path} in VSCode with side-by-side diff view.')
+    subprocess.run(['git', 'difftool', html_file_path], check=True)
+    print(f'Opened working tree changes for {html_file_path} in VSCode.')
 except subprocess.CalledProcessError:
-    print('Failed to open VSCode. Make sure VSCode is installed and "code" command is in your PATH.')
+    print('Failed to open VSCode with git difftool. Make sure git is installed and configured correctly.')
 except FileNotFoundError:
-    print('The "code" command was not found. Make sure VSCode is installed and "code" command is in your PATH.')
+    print('The "git" command was not found. Make sure Git is installed and in your PATH.')
