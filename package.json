@@ -1,6 +1,6 @@
 {
   "name": "guide-dog",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "An AI powered code library to assist web-developers create more accessible websites and applications.",
   "keywords": [
     "accessibility",
