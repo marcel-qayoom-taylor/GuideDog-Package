@@ -23,9 +23,12 @@
   "type": "module",
   "license": "MIT",
   "devDependencies": {
+    "prettier": "^3.3.3",
     "typescript": "^5.5.4"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "ci": "npm run build",
+    "format": "prettier --write ."
   }
 }
