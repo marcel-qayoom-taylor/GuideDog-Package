@@ -1,0 +1,5 @@
+---
+'guidedog': minor
+---
+
+Setup
