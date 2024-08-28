@@ -1,9 +1,17 @@
+# GuideDog
+
+## Overview
+
+GuideDog is a AI-powered code library that helps web-developers ensure their code meets web accessibility standards automatically.
+
 ## Notes
+
 This is working on my machine due to my config
- - I've got an OPENAI api key which is being read off my machine env vars
- - I've run the following git config settings to open properly
-    - git config --global diff.tool vscode
-    - git config --global difftool.vscode.cmd "code --wait --diff \$LOCAL \$REMOTE"
-    - git config --global difftool.prompt false
+
+- I've got an OPENAI api key which is being read off my machine env vars
+- I've run the following git config settings to open properly
+  - git config --global diff.tool vscode
+  - git config --global difftool.vscode.cmd "code --wait --diff \$LOCAL \$REMOTE"
+  - git config --global difftool.prompt false
 
 These will need to be configured in the setup script once we create the node package so that the user doesn't have to mess around with their config for it to work.

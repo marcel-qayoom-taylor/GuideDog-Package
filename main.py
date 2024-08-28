@@ -2,6 +2,8 @@ from openai import OpenAI
 # this has squiggle but env still works so idk man
 import subprocess  # for opening files in VSCode
 
+# run this script using `python main.py` in the terminal
+
 client = OpenAI()
 
 html_file_path = "index.html"

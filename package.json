@@ -1,0 +1,42 @@
+{
+  "name": "guidedog",
+  "version": "1.0.0",
+  "description": "An AI powered code library to assist web-developers create more accessible websites and applications.",
+  "keywords": [
+    "accessibility",
+    "accessible",
+    "web-development",
+    "ai"
+  ],
+  "homepage": "https://github.com/marcel-qayoom-taylor/GuideDog",
+  "bugs": {
+    "url": "https://github.com/marcel-qayoom-taylor/GuideDog/issues"
+  },
+  "author": "Marcel Qayoom-Taylor <marcelqayoomtaylor@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcel-qayoom-taylor/GuideDog"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "license": "MIT",
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.15.4",
+    "@changesets/cli": "^2.27.7",
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
+  },
+  "scripts": {
+    "build": "tsc",
+    "ci": "npm run build && npm run check-format && npm run check-exports && npm run lint && npm run test",
+    "format": "prettier --write .",
+    "check-format": "prettier --check .",
+    "check-exports": "attw --pack .",
+    "test": "vitest run",
+    "dev": "vitest"
+  },
+  "main": "dist/index.js"
+}
