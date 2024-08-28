@@ -2,17 +2,27 @@
   "name": "guidedog",
   "version": "1.0.0",
   "description": "An AI powered code library to assist web-developers create more accessible websites and applications.",
-  "keywords": ["accessibility", "accessible", "web-development", "ai"],
+  "keywords": [
+    "accessibility",
+    "accessible",
+    "web-development",
+    "ai"
+  ],
   "homepage": "https://github.com/marcel-qayoom-taylor/GuideDog",
   "bugs": {
     "url": "https://github.com/marcel-qayoom-taylor/GuideDog/issues"
   },
-  "author": "Marcel Qayoom-Taylor <marcelqayoomtaylor@gmail.com>", 
+  "author": "Marcel Qayoom-Taylor <marcelqayoomtaylor@gmail.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/marcel-qayoom-taylor/GuideDog"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "type": "module",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
 }

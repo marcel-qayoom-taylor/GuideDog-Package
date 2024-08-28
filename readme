@@ -1,3 +1,11 @@
+# GuideDog
+
+## Overview
+
+GuideDog is a AI-powered code library that helps web-developers ensure their code meets web accessibility standards automatically.
+
+
+
 ## Notes
 This is working on my machine due to my config
  - I've got an OPENAI api key which is being read off my machine env vars
