@@ -13,5 +13,6 @@
     "url": "git+https://github.com/marcel-qayoom-taylor/GuideDog"
   },
   "files": ["dist"],
-  "type": "module"
+  "type": "module",
+  "license": "MIT"
 }
