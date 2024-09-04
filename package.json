@@ -25,13 +25,20 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.4",
     "@changesets/cli": "^2.27.7",
+    "@types/node": "^22.5.3",
     "prettier": "^3.3.3",
+    "ts-node": "^10.9.2",
     "tsup": "^8.2.4",
+    "tsx": "^4.19.0",
     "typescript": "^5.5.4",
     "vitest": "^2.0.5"
   },
+  "bin": {
+    "guidedog": "./src/cli.js"
+  },
   "scripts": {
-    "build": "tsup",
+    "build": "tsc",
+    "start": "tsx src/cli.ts",
     "ci": "npm run build && npm run check-format && npm run check-exports && npm run lint",
     "format": "prettier --write .",
     "check-format": "prettier --check .",
@@ -49,5 +56,8 @@
       "import": "./dist/index.js",
       "default": "./dist/index.cjs"
     }
+  },
+  "dependencies": {
+    "openai": "^4.57.1"
   }
 }
