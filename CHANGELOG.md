@@ -1,5 +1,11 @@
 # guidedog
 
+## 1.1.3
+
+### Patch Changes
+
+- 35e05a7: Add env var passing function
+
 ## 1.1.2
 
 ### Patch Changes
