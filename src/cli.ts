@@ -15,7 +15,9 @@ const [command, htmlFilePath, openAIApiKey] = args;
 
 if (command !== 'improveSemantics') {
   console.log(`Unknown command: ${command}`);
-  console.log('Usage: npx guidedog improveSemantics <htmlFilePath> <openAIApiKey>');
+  console.log(
+    'Usage: npx guidedog improveSemantics <htmlFilePath> <openAIApiKey>',
+  );
   process.exit(1);
 }
 
