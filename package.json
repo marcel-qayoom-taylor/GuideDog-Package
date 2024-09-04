@@ -34,10 +34,10 @@
     "vitest": "^2.0.5"
   },
   "bin": {
-    "guidedog": "./src/cli.js"
+    "guidedog": "./dist/cli.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsup && chmod +x dist/cli.js",
     "start": "tsx src/cli.ts",
     "ci": "npm run build && npm run check-format && npm run check-exports && npm run lint",
     "format": "prettier --write .",
