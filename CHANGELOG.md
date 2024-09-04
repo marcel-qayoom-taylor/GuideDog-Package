@@ -1,5 +1,11 @@
 # guidedog
 
+## 1.1.4
+
+### Patch Changes
+
+- 24d3867: Working cli script
+
 ## 1.1.3
 
 ### Patch Changes
