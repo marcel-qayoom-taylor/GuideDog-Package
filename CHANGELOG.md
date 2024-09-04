@@ -1,5 +1,11 @@
 # guidedog
 
+## 1.1.5
+
+### Patch Changes
+
+- 3a6aee6: Fix cli issues
+
 ## 1.1.4
 
 ### Patch Changes
