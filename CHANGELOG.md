@@ -1,5 +1,11 @@
 # guidedog
 
+## 1.1.6
+
+### Patch Changes
+
+- 7694302: Add init function
+
 ## 1.1.5
 
 ### Patch Changes
