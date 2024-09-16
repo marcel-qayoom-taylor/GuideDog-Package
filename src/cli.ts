@@ -5,13 +5,15 @@ import { improveSemantics, init } from './index';
 const args = process.argv.slice(2);
 
 if (args.length === 1 && args[0] === 'init') {
-  try {
-    await init();
-  } catch (error) {
-    console.error('Error:', error);
-  } finally {
-    process.exit(0);
-  }
+  (async () => {
+    try {
+      await init();
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      process.exit(0);
+    }
+  })();
 }
 
 // if (args.length !== 3) {
