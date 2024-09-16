@@ -49,10 +49,28 @@ interface ImproveSemanticsOptions {
         name: 'GuideDog',
         instructions: 'You are an expert frontend developer that is tasked with helping me improve the accessibility of my frontend code.',
         tools: [{ type: 'code_interpreter' }],
-        model: 'gpt-4-turbo-preview',
+        model: 'gpt-4o-mini',
       });
-  
+
       console.log('Assistant "GuideDog" created successfully:', assistant);
+
+      // Read existing config or create a new one
+      let config: { assistantId: string } = { assistantId: '' }; // TODO: make this a proper config object
+
+      try {
+        const existingConfig = await fs.readFile('guidedog.config.js', 'utf8');
+        config = JSON.parse(existingConfig);
+      } catch (error) {
+        console.log('No existing config found, creating a new one.');
+      }
+  
+      // Append assistantId to the config
+      config['assistantId'] = assistant.id;
+  
+      // Write the updated config back to the file
+      await fs.writeFile('guidedog.config.js', `module.exports = ${JSON.stringify(config, null, 2)};`, 'utf8');
+      console.log('Configuration saved to guidedog.config.js');
+  
       return assistant;
     } catch (error) {
       console.error('Error creating assistant:', error);
