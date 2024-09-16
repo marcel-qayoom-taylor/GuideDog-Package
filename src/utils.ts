@@ -1,6 +1,8 @@
 import { OpenAI } from 'openai';
 import * as fs from 'fs/promises';
 import { exec } from 'child_process';
+import readline from 'readline';
+
 
 interface ImproveSemanticsOptions {
   htmlFilePath: string;
@@ -8,6 +10,57 @@ interface ImproveSemanticsOptions {
   openAIModel?: string;
   openVSCode?: boolean;
 }
+
+  // Start Generation Here
+  async function init() {
+    console.log('Starting init function');
+  
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
+  
+    let apiKey;
+    const originalStderr = process.stderr.write.bind(process.stderr);
+
+    try {
+      // Temporarily suppress stderr
+      process.stderr.write = () => true; // Suppress stderr output
+  
+      apiKey = await new Promise<string>((resolve) => {
+        rl.question('Enter your OpenAI API key: ', (answer) => {
+          resolve(answer.trim());
+          rl.close();
+        });
+      });
+    } catch (error) {
+      console.error('Error getting API key:', error);
+      rl.close();
+      return;
+    } finally {
+      // Restore stderr
+      process.stderr.write = originalStderr;
+    }
+  
+    const client = new OpenAI({ apiKey });
+  
+    try {
+      const assistant = await client.beta.assistants.create({
+        name: 'GuideDog',
+        instructions: 'You are an expert frontend developer that is tasked with helping me improve the accessibility of my frontend code.',
+        tools: [{ type: 'code_interpreter' }],
+        model: 'gpt-4-turbo-preview',
+      });
+  
+      console.log('Assistant "GuideDog" created successfully:', assistant);
+      return assistant;
+    } catch (error) {
+      console.error('Error creating assistant:', error);
+      throw error;
+    } finally {
+      console.log('Init function completed');
+    }
+  }
 
 async function improveHtmlSemantics({
   htmlFilePath,
@@ -85,4 +138,4 @@ async function improveSemantics(htmlFilePath: string, openAIApiKey: string) {
 }
 
 // Export functions for use as a module
-export { improveSemantics, improveHtmlSemantics };
+export { improveSemantics, improveHtmlSemantics, init };
