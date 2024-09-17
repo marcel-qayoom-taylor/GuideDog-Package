@@ -1,10 +1,13 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import OpenAI from 'openai';
 
 const repoPath: string = process.cwd();
 
+const openai = new OpenAI();
+
 function isHtmlFile(fileName: string): boolean {
-  const extensions: string[] = ['.html', '.jsx', '.tsx', '.vue']; //Will change to come from config
+  const extensions: string[] = ['.html', '.jsx', '.tsx', '.vue']; //Plan to change to be more intuitive (config usage, more dynamic way to determine html file)
   return extensions.some((ext) => fileName.endsWith(ext));
 }
 
@@ -19,7 +22,7 @@ function getHtmlFiles(dir: string): string[] {
     if (stat.isDirectory()) {
       results.push(...getHtmlFiles(fullPath));
     } else if (isHtmlFile(fullPath)) {
-      results.push(fullPath); 
+      results.push(fullPath);
     }
   });
 
@@ -30,6 +33,7 @@ function readFile(filePath: string): string {
   return fs.readFileSync(filePath, 'utf-8');
 }
 
+//probs not needed
 function chunkFile(content: string, chunkSize: number = 2000): string[] {
   const chunks: string[] = [];
   for (let i = 0; i < content.length; i += chunkSize) {
@@ -38,13 +42,18 @@ function chunkFile(content: string, chunkSize: number = 2000): string[] {
   return chunks;
 }
 
-// Main function to run the code search
-async function runCodeSearch(): Promise<void> {
-  console.log('Starting code search...');
+async function runCodeScan(): Promise<void> {
+  console.log('Running code scan');
   
   const htmlFiles: string[] = getHtmlFiles(repoPath);
-  console.log('Found HTML-related files:', htmlFiles);
+
+  htmlFiles.forEach(async (file) => {
+    await openai.files.create({
+        file: fs.createReadStream(file),
+        purpose: "assistants",
+    });
+
+    console.log(`Added ${file} to assistant`);
+  });
 }
 
-// Execute the code search when the script is run
-runCodeSearch().catch(console.error);
