@@ -2,6 +2,8 @@ import { OpenAI } from 'openai';
 import * as fs from 'fs/promises';
 import { exec } from 'child_process';
 import readline from 'readline';
+import { AxePuppeteer }  from '@axe-core/puppeteer';
+import puppeteer from 'puppeteer';
 
 interface ImproveSemanticsOptions {
   htmlFilePath: string;
@@ -159,5 +161,73 @@ async function improveSemantics(htmlFilePath: string, openAIApiKey: string) {
   }
 }
 
+const assessAccessibility = async (flag: boolean) => {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto(`http://localhost:3000`);
+
+  const results = await new AxePuppeteer(page).analyze();
+
+  let p2 = 0; // Critical and Serious issues
+  let p1 = 0; // Moderate issues
+  let p0 = 0; // Minor issues
+  
+  results.violations.forEach(violation => {
+    violation.nodes.forEach(node => console.log(node));
+  })
+
+  // Count issues by impact
+  results.violations.forEach(violation => {
+    switch (violation.impact) {
+      case 'critical':
+      case 'serious':
+        p2 += violation.nodes.length;
+        break;
+      case 'moderate':
+        p1 += violation.nodes.length;
+        break;
+      case 'minor':
+        p0 += violation.nodes.length;
+        break;
+    }
+  });
+
+  // Calculate the raw score
+  const rawScore = (0.4 * p2 + 0.8 * p1 + p0) / (p1 + p2 + p0);
+
+  // Optionally weight the score
+  const weightedScore = 500 + (rawScore * 500.0);
+  console.log(`minor: ${p0} | minor: ${p1} | minor: ${p2}`)
+  console.log(`Raw score: ${rawScore} | Weighted score: ${weightedScore}`)
+
+  const score = {
+    rawScore,
+    weightedScore,
+    serious: p2,
+    moderate: p1,
+    minor: p0
+  }
+
+  if (flag) {
+    await fs.writeFile(
+      'accessibility-results.json',
+      JSON.stringify(results, null, 2),
+      'utf8',
+    );
+
+    await fs.writeFile(
+      'accessibility-score.json',
+      JSON.stringify(score, null, 2),
+      'utf-8'
+    )
+  }
+
+  await browser.close();
+  
+  const accessibilityResult = { score, results };
+
+  return accessibilityResult;
+}
+
 // Export functions for use as a module
-export { improveSemantics, improveHtmlSemantics, init };
+export { improveSemantics, improveHtmlSemantics, init, assessAccessibility };

@@ -58,6 +58,8 @@
     }
   },
   "dependencies": {
-    "openai": "^4.57.1"
+    "@axe-core/puppeteer": "^4.10.0",
+    "openai": "^4.57.1",
+    "puppeteer": "^23.3.1"
   }
 }
