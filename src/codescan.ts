@@ -29,31 +29,26 @@ function getHtmlFiles(dir: string): string[] {
   return results;
 }
 
-function readFile(filePath: string): string {
-  return fs.readFileSync(filePath, 'utf-8');
-}
-
-//probs not needed
-function chunkFile(content: string, chunkSize: number = 2000): string[] {
-  const chunks: string[] = [];
-  for (let i = 0; i < content.length; i += chunkSize) {
-    chunks.push(content.substring(i, i + chunkSize));
-  }
-  return chunks;
-}
-
-async function runCodeScan(): Promise<void> {
+async function runCodeScan(): Promise<string>{
   console.log('Running code scan');
-  
-  const htmlFiles: string[] = getHtmlFiles(repoPath);
 
-  htmlFiles.forEach(async (file) => {
-    await openai.files.create({
-        file: fs.createReadStream(file),
-        purpose: "assistants",
-    });
-
-    console.log(`Added ${file} to assistant`);
-  });
+  return CreateVectorStore( getHtmlFiles(repoPath));
 }
 
+async function CreateVectorStore(htmlFiles: string[]): Promise<string>{
+  const fileStreams = htmlFiles.map((filePath) =>
+    fs.createReadStream(filePath),
+  );
+
+  let vectorStore = await openai.beta.vectorStores.create({
+    name: "Codebase Context",
+  });
+
+  await openai.beta.vectorStores.fileBatches.uploadAndPoll(vectorStore.id, {
+    files: fileStreams,
+  });
+
+  return vectorStore.id;
+}
+
+export {runCodeScan};
