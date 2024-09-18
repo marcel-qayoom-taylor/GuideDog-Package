@@ -2,8 +2,8 @@ import { OpenAI } from 'openai';
 import * as fs from 'fs/promises';
 import { exec } from 'child_process';
 import readline from 'readline';
-import { runCodeScan } from './codescan';
-
+import { runCodeScan } from './codebasescan';
+import { CreateAssistant } from './modelhandler';
 interface ImproveSemanticsOptions {
   htmlFilePath: string;
   openAIApiKey: string;
@@ -17,23 +17,10 @@ async function init() {
 
   const apiKey = await GetUserAPIKey();
 
-  const client = new OpenAI({ apiKey });
-
   try {
-    const contextID = await runCodeScan();
+    const contextFiles = await runCodeScan();
 
-    const assistant = await client.beta.assistants.create({
-      name: 'GuideDog',
-      instructions:
-        'You are an expert frontend developer that is tasked with helping me improve the accessibility of my frontend code.',
-      tools: [{ type: 'file_search' }],
-      tool_resources: {
-        file_search: {
-          vector_store_ids: [contextID]
-        }
-      },
-      model: 'gpt-4o-mini',
-    });
+    const assistant = await CreateAssistant(apiKey, contextFiles);
 
     console.log('Assistant "GuideDog" created successfully:');
 
@@ -70,13 +57,14 @@ async function UpdateConfig(assistant: OpenAI.Beta.Assistants.Assistant){
   );
   console.log('Configuration saved to guidedog.config.js');
 }
-async function GetUserAPIKey(){
+
+async function GetUserAPIKey(): Promise<string>{
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
 
-  let apiKey;
+  let apiKey = '';
   const originalStderr = process.stderr.write.bind(process.stderr);
 
   try {
