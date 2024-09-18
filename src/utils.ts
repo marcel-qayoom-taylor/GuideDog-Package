@@ -35,6 +35,18 @@ async function init() {
   }
 }
 
+async function Check (){ // Axe-Core
+
+}
+
+async function FixFile(){
+
+}
+
+async function FixRepo(){
+
+}
+
 async function UpdateConfig(assistant: OpenAI.Beta.Assistants.Assistant){
   // Read existing config or create a new one
   let config: { assistantId: string } = { assistantId: '' }; // TODO: make this a proper config object
