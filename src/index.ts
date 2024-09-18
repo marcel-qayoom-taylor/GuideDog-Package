@@ -1,1 +1,1 @@
-export { improveSemantics, improveHtmlSemantics, init } from './utils';
+export { improveSemantics, improveHtmlSemantics, init, assessAccessibility } from './utils';
