@@ -4,6 +4,8 @@ import { exec } from 'child_process';
 import readline from 'readline';
 import { AxePuppeteer }  from '@axe-core/puppeteer';
 import puppeteer from 'puppeteer';
+import { runCodeScan } from './CodeBaseScan';
+import { CreateAssistant } from './ModelHandler';
 
 interface ImproveSemanticsOptions {
   htmlFilePath: string;
@@ -16,12 +18,68 @@ interface ImproveSemanticsOptions {
 async function init() {
   console.log('Starting init function');
 
+  const apiKey = await GetUserAPIKey();
+
+  try {
+    const contextFiles = await runCodeScan();
+
+    const assistant = await CreateAssistant(apiKey, contextFiles);
+
+    console.log('Assistant "GuideDog" created successfully:');
+
+    await UpdateConfig(assistant);
+
+    return assistant;
+  } catch (error) {
+    console.error('Error creating assistant:', error);
+    throw error;
+  } finally {
+    console.log('Init function completed');
+  }
+}
+
+async function Check (){ // Axe-Core
+
+}
+
+async function FixFile(){
+
+}
+
+async function FixRepo(){
+
+}
+
+async function UpdateConfig(assistant: OpenAI.Beta.Assistants.Assistant){
+  // Read existing config or create a new one
+  let config: { assistantId: string } = { assistantId: '' }; // TODO: make this a proper config object
+
+  try {
+    const existingConfig = await fs.readFile('guidedog.config.js', 'utf8');
+    config = JSON.parse(existingConfig);
+  } catch (error) {
+    console.log('No existing config found, creating a new one.');
+  }
+
+  // Append assistantId to the config
+  config['assistantId'] = assistant.id;
+
+  // Write the updated config back to the file
+  await fs.writeFile(
+    'guidedog.config.js',
+    `module.exports = ${JSON.stringify(config, null, 2)};`,
+    'utf8',
+  );
+  console.log('Configuration saved to guidedog.config.js');
+}
+
+async function GetUserAPIKey(): Promise<string>{
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
 
-  let apiKey;
+  let apiKey = '';
   const originalStderr = process.stderr.write.bind(process.stderr);
 
   try {
@@ -37,55 +95,14 @@ async function init() {
   } catch (error) {
     console.error('Error getting API key:', error);
     rl.close();
-    return;
   } finally {
     // Restore stderr
     process.stderr.write = originalStderr;
+    return apiKey;
   }
 
-  const client = new OpenAI({ apiKey });
-
-  try {
-    const assistant = await client.beta.assistants.create({
-      name: 'GuideDog',
-      instructions:
-        'You are an expert frontend developer that is tasked with helping me improve the accessibility of my frontend code.',
-      tools: [{ type: 'code_interpreter' }],
-      model: 'gpt-4o-mini',
-    });
-
-    console.log('Assistant "GuideDog" created successfully:', assistant);
-
-    // Read existing config or create a new one
-    let config: { assistantId: string } = { assistantId: '' }; // TODO: make this a proper config object
-
-    try {
-      const existingConfig = await fs.readFile('guidedog.config.js', 'utf8');
-      config = JSON.parse(existingConfig);
-    } catch (error) {
-      console.log('No existing config found, creating a new one.');
-    }
-
-    // Append assistantId to the config
-    config['assistantId'] = assistant.id;
-
-    // Write the updated config back to the file
-    await fs.writeFile(
-      'guidedog.config.js',
-      `module.exports = ${JSON.stringify(config, null, 2)};`,
-      'utf8',
-    );
-    console.log('Configuration saved to guidedog.config.js');
-
-    return assistant;
-  } catch (error) {
-    console.error('Error creating assistant:', error);
-    throw error;
-  } finally {
-    console.log('Init function completed');
-  }
 }
-
+//Old Functions
 async function improveHtmlSemantics({
   htmlFilePath,
   openAIApiKey,
