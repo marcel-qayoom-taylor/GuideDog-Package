@@ -37,8 +37,8 @@ async function SuggestRepoChanges(apiKey: string, assistantId: string, contextId
   const thread = await client.beta.threads.create({
     messages: [
       {
-        role: 'user', // The role is a string, such as "user"
-        content: prompt, // The content is a string, not an array
+        role: 'user',
+        content: prompt,
       },
     ],
     tool_resources: {
@@ -52,21 +52,17 @@ async function SuggestRepoChanges(apiKey: string, assistantId: string, contextId
     assistant_id: assistantId,
   });
 
-  // Fetch the messages from the run, expecting it to be an array
   const messages = await client.beta.threads.messages.list(thread.id, {
     run_id: run.id,
   });
 
-  // Access the last message's content safely
   const lastMessage = messages.data[messages.data.length - 1]?.content;
 
-  // Make sure the last message exists and is a string
   if (typeof lastMessage === 'string') {
     try {
-      // Parse the last message's content as JSON
       const jsonResponse = JSON.parse(lastMessage);
-      console.log(jsonResponse); // Print the JSON response for debugging
-      return jsonResponse; // Return the JSON response
+      console.log(jsonResponse);
+      return jsonResponse;
     } catch (error) {
       console.error('Error parsing the assistant response as JSON:', error);
     }
