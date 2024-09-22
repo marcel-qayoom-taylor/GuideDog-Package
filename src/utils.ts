@@ -3,7 +3,7 @@ import * as fs from 'fs/promises';
 import { exec } from 'child_process';
 import readline from 'readline';
 import { runCodeScan } from './CodeBaseScan';
-import { CreateAssistant } from './ModelHandler';
+import { CreateAssistant, SuggestRepoChanges } from './ModelHandler';
 interface ImproveSemanticsOptions {
   htmlFilePath: string;
   openAIApiKey: string;
@@ -45,7 +45,14 @@ async function FixFile(){
 
 async function FixRepo(){
   try{
-    
+    const config = JSON.parse(await fs.readFile('guidedog.config.js', 'utf8'));
+
+    const apiKey = config['apiKey'];
+    const assistantId =  config['assistantId'];
+
+    const suggestionList = await SuggestRepoChanges(apiKey, assistantId);
+
+    return suggestionList;
   }
   catch(error){
     console.log("Error getting suggestions for the Repo: " + error);
