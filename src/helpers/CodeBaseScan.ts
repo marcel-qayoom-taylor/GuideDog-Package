@@ -1,37 +1,16 @@
-import * as fs from 'fs';
-import * as path from 'path';
-
-const repoPath: string = process.cwd();
+import { glob } from 'glob';
+import { readIgnore } from '@/helpers/readIgnore';
 
 export async function runCodeScan(): Promise<string[]> {
-  console.log('Running code scan');
+  console.log('Scanning...');
+  const _ignore = readIgnore(); 
+  try {
+    const patterns = [`**/*.{js,jsx,ts,tsx,html,htm,xhtml,css,scss,less,vue,svelte}`];
+    const filePaths = await glob(patterns, { ignore: [..._ignore, 'node_modules/**', '*.json', '.next/**', 'dist/**', 'build/**', 'public/**'] });
 
-  return getHtmlFiles(repoPath);
-}
-
-function getHtmlFiles(dir: string): string[] {
-  const results: string[] = [];
-  const files = fs.readdirSync(dir);
-
-  files.forEach((file) => {
-    const fullPath = path.join(dir, file);
-    const stat = fs.lstatSync(fullPath);
-
-    if (stat.isDirectory()) {
-      if (path.basename(fullPath) !== 'node_modules') {
-        // Ignore node_modules folder
-        results.push(...getHtmlFiles(fullPath));
-      }
-    } else if (isHtmlFile(fullPath)) {
-      results.push(fullPath);
-      console.log(fullPath);
-    }
-  });
-
-  return results;
-}
-
-function isHtmlFile(fileName: string): boolean {
-  const extensions: string[] = ['.html', '.jsx', '.tsx', '.vue']; //Plan to change to be more intuitive (config usage, more dynamic way to determine html file)
-  return extensions.some((ext) => fileName.endsWith(ext));
+    console.log('✅Scanning completed');
+    return filePaths;
+  } catch (error) {
+    throw error;
+  }
 }
