@@ -1,13 +1,11 @@
-#!/usr/bin/env node
-
-import { assessAccessibility, improveSemantics, init } from './index';
+import { init, check, fixFile, fixRepo } from './index';
 
 const args = process.argv.slice(2);
 
 if (args.length === 1) {
   switch (args[0]) {
     case 'init':
-      (async () => {
+      await (async () => {
         try {
           await init();
         } catch (error) {
@@ -19,18 +17,29 @@ if (args.length === 1) {
       break;
 
     case 'check':
-      async () => {
+      await (async () => {
         try {
-          await assessAccessibility(false);
+          const __report = false;
+          check(__report);
         } catch (error) {
           console.error('Error:', error);
         } finally {
           process.exit(0);
         }
-      };
+      })();
       break;
 
     case 'fix':
+      await (async () => {
+        try {
+          const __report = false;
+          check(__report);
+        } catch (error) {
+          console.error('Error:', error);
+        } finally {
+          process.exit(0);
+        }
+      })();
       break;
 
     default:
@@ -41,17 +50,41 @@ if (args.length === 1) {
   switch (args[0]) {
     case 'check':
       if (args[1] == '--report') {
-        async () => {
+        await (async () => {
           try {
-            await assessAccessibility(true);
+            const __report = true;
+            check(__report);
           } catch (error) {
             console.error('Error:', error);
           } finally {
             process.exit(0);
           }
-        };
+        })();
       } else {
-        console.error('Invalid command');
+        console.error('Invalid --flag');
+      }
+      break;
+
+    default:
+      console.error('Invalid command');
+      break;
+  }
+} else if (args.length == 3) {
+  switch (args[0]) {
+    case 'fix':
+      if (args[1] == '--file') {
+        await (async () => {
+          try {
+            const __report = true;
+            check(__report);
+          } catch (error) {
+            console.error('Error:', error);
+          } finally {
+            process.exit(0);
+          }
+        })();
+      } else {
+        console.error('Invalid --flag');
       }
       break;
 
@@ -62,30 +95,3 @@ if (args.length === 1) {
 } else {
   console.error('Invalid command');
 }
-
-// if (args.length !== 3) {
-//   console.log(
-//     'Usage: npx guidedog improveSemantics <htmlFilePath> <openAIApiKey>',
-//   );
-//   process.exit(1);
-// }
-
-// const [command, htmlFilePath, openAIApiKey] = args;
-
-// if (command !== 'improveSemantics' && command !== 'init') {
-//   console.log(`Unknown command: ${command}`);
-//   console.log(
-//     'Usage: npx guidedog improveSemantics <htmlFilePath> <openAIApiKey> OR npx guidedog init',
-//   );
-//   process.exit(1);
-// }
-
-// Check if either argument is undefined or an empty string
-// if (!htmlFilePath || !openAIApiKey) {
-//   console.error('Both htmlFilePath and openAIApiKey must be provided.');
-//   process.exit(1);
-// }
-
-// improveSemantics(htmlFilePath, openAIApiKey).catch((error) => {
-//   console.error('Error:', error);
-// });

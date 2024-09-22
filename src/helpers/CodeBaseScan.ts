@@ -1,10 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import OpenAI from 'openai';
 
 const repoPath: string = process.cwd();
 
-async function runCodeScan(): Promise<string[]> {
+export async function runCodeScan(): Promise<string[]> {
   console.log('Running code scan');
 
   return getHtmlFiles(repoPath);
@@ -36,5 +35,3 @@ function isHtmlFile(fileName: string): boolean {
   const extensions: string[] = ['.html', '.jsx', '.tsx', '.vue']; //Plan to change to be more intuitive (config usage, more dynamic way to determine html file)
   return extensions.some((ext) => fileName.endsWith(ext));
 }
-
-export { runCodeScan };

@@ -1,6 +1,10 @@
+import { init } from '@/utils/init';
+import { check } from '@/utils/check'
+import { fixFile, fixRepo } from '@/utils/fix';
+
 export {
-  improveSemantics,
-  improveHtmlSemantics,
   init,
-  assessAccessibility,
-} from './utils';
+  check,
+  fixFile,
+  fixRepo
+};

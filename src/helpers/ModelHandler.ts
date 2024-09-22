@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 import * as fs from 'fs';
 
-async function CreateAssistant(apiKey: string, htmlFiles: string[]) {
+export async function CreateAssistant(apiKey: string, htmlFiles: string[]) {
   const client = new OpenAI({ apiKey });
 
   const contextVectorID = await CreateVectorStore(htmlFiles, client);
@@ -40,5 +40,3 @@ async function CreateVectorStore(
 
   return vectorStore.id;
 }
-
-export { CreateAssistant };
