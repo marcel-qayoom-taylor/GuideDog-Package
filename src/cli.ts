@@ -1,97 +1,58 @@
+#!/usr/bin/env node
+import { Command } from 'commander';
+import inquirer from 'inquirer';
 import { init, check, fixFile, fixRepo } from './index';
 
-const args = process.argv.slice(2);
+const program = new Command();
 
-if (args.length === 1) {
-  switch (args[0]) {
-    case 'init':
-      await (async () => {
-        try {
-          await init();
-        } catch (error) {
-          console.error('Error:', error);
-        } finally {
-          process.exit(0);
-        }
-      })();
-      break;
+program
+  .name('guidedog')
+  .description('An AI powered code library to assist web-developers create more accessible websites and applications.')
+  .version('1.0.0');
 
-    case 'check':
-      await (async () => {
-        try {
-          const __report = false;
-          check(__report);
-        } catch (error) {
-          console.error('Error:', error);
-        } finally {
-          process.exit(0);
-        }
-      })();
-      break;
+program
+  .command('init')
+  .description('Initialize the accessibility config for the repo')
+  .action(async () => {
+    console.log('Starting init...');
+    try {
+      // Use Inquirer to prompt the user with OpenAI key input and framework choices
+      const answers = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'apiKey',
+          message: 'Enter your OpenAI API key:',
+          validate: (input) => input.length > 0 || 'API key cannot be empty',
+        },
+        {
+          type: 'list',
+          name: 'framework',
+          message: 'What framework are you using?',
+          choices: ['React', 'Angular', 'Vue', 'Other'],
+        },
+      ]);
+  
+      await init(answers.apiKey, answers.framework);
+      console.log('✅Init completed!');
+    } catch (error) {
+      program.error(`❌Error during initialization: ${error}`)
+    }
+  });
 
-    case 'fix':
-      await (async () => {
-        try {
-          const __report = false;
-          check(__report);
-        } catch (error) {
-          console.error('Error:', error);
-        } finally {
-          process.exit(0);
-        }
-      })();
-      break;
+program
+  .command('check')
+  .description('Check accessibility of your project')
+  .option('--report', 'Generate a detailed accessibility report')
+  .action((options) => {
+    check(options.report);
+  });
 
-    default:
-      console.error('Invalid command');
-      break;
-  }
-} else if (args.length == 2) {
-  switch (args[0]) {
-    case 'check':
-      if (args[1] == '--report') {
-        await (async () => {
-          try {
-            const __report = true;
-            check(__report);
-          } catch (error) {
-            console.error('Error:', error);
-          } finally {
-            process.exit(0);
-          }
-        })();
-      } else {
-        console.error('Invalid --flag');
-      }
-      break;
+// TODO: Add option for fixFile
+program
+  .command('fix')
+  .description('Fix accessibility issues in a specific file')
+  .action(() => {
+    fixRepo();
+  });
 
-    default:
-      console.error('Invalid command');
-      break;
-  }
-} else if (args.length == 3) {
-  switch (args[0]) {
-    case 'fix':
-      if (args[1] == '--file') {
-        await (async () => {
-          try {
-            const __report = true;
-            check(__report);
-          } catch (error) {
-            console.error('Error:', error);
-          } finally {
-            process.exit(0);
-          }
-        })();
-      } else {
-        console.error('Invalid --flag');
-      }
-      break;
-
-    default:
-      console.error('Invalid command');
-      break;
-  }
-} else {
-  console.error('Invalid command');
-}
+program.parse(process.argv);
