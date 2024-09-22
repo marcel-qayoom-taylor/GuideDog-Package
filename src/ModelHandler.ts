@@ -19,30 +19,60 @@ async function CreateAssistant(apiKey: string,htmlFiles: string[]){
         model: 'gpt-4o-mini',
       });
 
-      return assistant;
+      return {assistant, contextVectorID};
 }
 
-async function SuggestRepoChanges(apiKey: string, assistantId: string){
+async function SuggestRepoChanges(apiKey: string, assistantId: string, contextId: string){
   const client = new OpenAI({ apiKey });
 
-  const prompt = "Please draw on your file knowledge base to make the following HTML more semantic and accessible. Consider using header tags instead of just <p> or using <section>/<article> instead of <div> where appropriate. Do not response with any other words or content EXCEPT for the html code. This is extremely important. The returned file should be a json with a list of objects containing the following data fields: Filename, suggestion line number, type of accessibility issue and suggested code improvement";
+  // Prompt should be a string
+  const prompt: string = `
+    Please draw on your file knowledge base to make the following HTML more semantic and accessible. 
+    Consider using header tags instead of just <p> or using <section>/<article> instead of <div> where appropriate. 
+    Do not respond with any other words or content EXCEPT for the HTML code and suggestions.
+    Return the result as a JSON with a list of objects containing the following data fields:
+    Filename, suggestion line number, type of accessibility issue, and suggested code improvement.
+  `;
 
   const thread = await client.beta.threads.create({
-    messages: [ { role: "user", content: prompt} ],
+    messages: [
+      {
+        role: 'user', // The role is a string, such as "user"
+        content: prompt, // The content is a string, not an array
+      },
+    ],
     tool_resources: {
-      "file_search": {
-        "vector_store_ids": ["vs_2"]
-      }
-    }
+      file_search: {
+        vector_store_ids: [contextId],
+      },
+    },
   });
 
   const run = await client.beta.threads.runs.createAndPoll(thread.id, {
     assistant_id: assistantId,
   });
 
+  // Fetch the messages from the run, expecting it to be an array
   const messages = await client.beta.threads.messages.list(thread.id, {
     run_id: run.id,
   });
+
+  // Access the last message's content safely
+  const lastMessage = messages.data[messages.data.length - 1]?.content;
+
+  // Make sure the last message exists and is a string
+  if (typeof lastMessage === 'string') {
+    try {
+      // Parse the last message's content as JSON
+      const jsonResponse = JSON.parse(lastMessage);
+      console.log(jsonResponse); // Print the JSON response for debugging
+      return jsonResponse; // Return the JSON response
+    } catch (error) {
+      console.error('Error parsing the assistant response as JSON:', error);
+    }
+  } else {
+    console.error('No valid content found in the assistant response.');
+  }
 }
 
 async function CreateVectorStore(htmlFiles: string[], client: OpenAI): Promise<string>{

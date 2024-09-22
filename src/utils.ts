@@ -20,13 +20,13 @@ async function init() {
   try {
     const contextFiles = await runCodeScan();
 
-    const assistant = await CreateAssistant(apiKey, contextFiles);
+    const response = await CreateAssistant(apiKey, contextFiles);
 
     console.log('Assistant "GuideDog" created successfully:');
 
-    await UpdateConfig(assistant, apiKey);
+    await UpdateConfig(response.assistant, apiKey, response.contextVectorID);
 
-    return assistant;
+    return response;
   } catch (error) {
     console.error('Error creating assistant:', error);
     throw error;
@@ -49,8 +49,9 @@ async function FixRepo(){
 
     const apiKey = config['apiKey'];
     const assistantId =  config['assistantId'];
+    const contextId = config['contextId'];
 
-    const suggestionList = await SuggestRepoChanges(apiKey, assistantId);
+    const suggestionList = await SuggestRepoChanges(apiKey, assistantId, contextId);
 
     return suggestionList;
   }
@@ -59,9 +60,9 @@ async function FixRepo(){
   }
 }
 
-async function UpdateConfig(assistant: OpenAI.Beta.Assistants.Assistant, apiKey: string){
+async function UpdateConfig(assistant: OpenAI.Beta.Assistants.Assistant, apiKey: string, contextId: string){
   // Read existing config or create a new one
-  let config: { assistantId: string; apiKey: string } = { assistantId: '', apiKey: '' };
+  let config: { assistantId: string; apiKey: string; contextId: string} = { assistantId: '', apiKey: '', contextId: ''};
 
   try {
     const existingConfig = await fs.readFile('guidedog.config.js', 'utf8');
@@ -73,6 +74,7 @@ async function UpdateConfig(assistant: OpenAI.Beta.Assistants.Assistant, apiKey:
   // Append assistantId to the config
   config['assistantId'] = assistant.id;
   config['apiKey'] = apiKey;
+  config['contextId'] = contextId;
 
   // Write the updated config back to the file
   await fs.writeFile(
