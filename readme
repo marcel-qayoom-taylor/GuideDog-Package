@@ -6,17 +6,15 @@ GuideDog is a AI-powered code library that helps web-developers ensure their cod
 
 GuideDog currently has 3 main commands.
 
- - npx guidedog init
-    Will prompt the user for an OpenAI api key.
-    If successful, it will create an assistant with our pregenerated prompt and store crucial information within a config file in the users project directory.
+- npx guidedog init
+  Will prompt the user for an OpenAI api key.
+  If successful, it will create an assistant with our pregenerated prompt and store crucial information within a config file in the users project directory.
 
+- npx guidedog check
+  Will allow the user to check the current accessibility of their project. The command will provide the user with an accessibility score and a breakdown on key WCAG metrics.
 
- - npx guidedog check
-    Will allow the user to check the current accessibility of their project. The command will provide the user with an accessibility score and a breakdown on key WCAG metrics.
-
- - npx guidedog write
-    Will generate AI-powered accessibility suggestions based of the deficiencies previously detected. Will then prompt the user to check and approve each suggestion
-
+- npx guidedog write
+  Will generate AI-powered accessibility suggestions based of the deficiencies previously detected. Will then prompt the user to check and approve each suggestion
 
 ## Notes
 
