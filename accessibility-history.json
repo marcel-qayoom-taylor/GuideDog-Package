@@ -1,20 +1,18 @@
- 
-
 [
-    {
-        "projectID": "projectX12",
-        "timestamp": "2024-09-17:10:00",
-        "score": 85
-    },
-    {
-        "projectID": "projectX12",
-        "timestamp": "2024-09-17:10:30",
-        "score": 88
-    },
+  {
+    "projectID": "projectX12",
+    "timestamp": "2024-09-17:10:00",
+    "score": 85
+  },
+  {
+    "projectID": "projectX12",
+    "timestamp": "2024-09-17:10:30",
+    "score": 88
+  },
 
-    {
-        "projectID": "projectX13",
-        "timestamp": "2024-09-17:12:30",
-        "score": 76
-    }
+  {
+    "projectID": "projectX13",
+    "timestamp": "2024-09-17:12:30",
+    "score": 76
+  }
 ]

@@ -4,7 +4,7 @@ import OpenAI from 'openai';
 
 const repoPath: string = process.cwd();
 
-async function runCodeScan(): Promise<string[]>{
+async function runCodeScan(): Promise<string[]> {
   console.log('Running code scan');
 
   return getHtmlFiles(repoPath);
@@ -19,7 +19,8 @@ function getHtmlFiles(dir: string): string[] {
     const stat = fs.lstatSync(fullPath);
 
     if (stat.isDirectory()) {
-      if (path.basename(fullPath) !== 'node_modules') { // Ignore node_modules folder
+      if (path.basename(fullPath) !== 'node_modules') {
+        // Ignore node_modules folder
         results.push(...getHtmlFiles(fullPath));
       }
     } else if (isHtmlFile(fullPath)) {
@@ -36,4 +37,4 @@ function isHtmlFile(fileName: string): boolean {
   return extensions.some((ext) => fileName.endsWith(ext));
 }
 
-export {runCodeScan};
+export { runCodeScan };

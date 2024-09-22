@@ -19,7 +19,7 @@ if (args.length === 1) {
       break;
 
     case 'check':
-      (async () => {
+      async () => {
         try {
           await assessAccessibility(false);
         } catch (error) {
@@ -27,42 +27,39 @@ if (args.length === 1) {
         } finally {
           process.exit(0);
         }
-      })
+      };
       break;
 
     case 'fix':
-
-    break;
+      break;
 
     default:
       console.error('Invalid command');
       break;
   }
-}
-else if (args.length == 2) {
+} else if (args.length == 2) {
   switch (args[0]) {
-  case 'check':
-    if (args[1] == '--report') {
-      (async () => {
-        try {
-          await assessAccessibility(true);
-        } catch (error) {
-          console.error('Error:', error);
-        } finally {
-          process.exit(0);
-        }
-      })
-    } else {
-      console.error('Invalid command');
-    }
-    break;
+    case 'check':
+      if (args[1] == '--report') {
+        async () => {
+          try {
+            await assessAccessibility(true);
+          } catch (error) {
+            console.error('Error:', error);
+          } finally {
+            process.exit(0);
+          }
+        };
+      } else {
+        console.error('Invalid command');
+      }
+      break;
 
     default:
       console.error('Invalid command');
       break;
   }
-}
-else {
+} else {
   console.error('Invalid command');
 }
 

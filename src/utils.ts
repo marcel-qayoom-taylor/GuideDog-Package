@@ -2,7 +2,7 @@ import { OpenAI } from 'openai';
 import * as fs from 'fs/promises';
 import { exec } from 'child_process';
 import readline from 'readline';
-import { AxePuppeteer }  from '@axe-core/puppeteer';
+import { AxePuppeteer } from '@axe-core/puppeteer';
 import puppeteer from 'puppeteer';
 import { runCodeScan } from './CodeBaseScan';
 import { CreateAssistant } from './ModelHandler';
@@ -38,19 +38,15 @@ async function init() {
   }
 }
 
-async function Check (){ // Axe-Core
-
+async function Check() {
+  // Axe-Core
 }
 
-async function FixFile(){
+async function FixFile() {}
 
-}
+async function FixRepo() {}
 
-async function FixRepo(){
-
-}
-
-async function UpdateConfig(assistant: OpenAI.Beta.Assistants.Assistant){
+async function UpdateConfig(assistant: OpenAI.Beta.Assistants.Assistant) {
   // Read existing config or create a new one
   let config: { assistantId: string } = { assistantId: '' }; // TODO: make this a proper config object
 
@@ -73,7 +69,7 @@ async function UpdateConfig(assistant: OpenAI.Beta.Assistants.Assistant){
   console.log('Configuration saved to guidedog.config.js');
 }
 
-async function GetUserAPIKey(): Promise<string>{
+async function GetUserAPIKey(): Promise<string> {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -100,7 +96,6 @@ async function GetUserAPIKey(): Promise<string>{
     process.stderr.write = originalStderr;
     return apiKey;
   }
-
 }
 //Old Functions
 async function improveHtmlSemantics({
@@ -188,13 +183,13 @@ const assessAccessibility = async (flag: boolean) => {
   let p2 = 0; // Critical and Serious issues
   let p1 = 0; // Moderate issues
   let p0 = 0; // Minor issues
-  
-  results.violations.forEach(violation => {
-    violation.nodes.forEach(node => console.log(node));
-  })
+
+  results.violations.forEach((violation) => {
+    violation.nodes.forEach((node) => console.log(node));
+  });
 
   // Count issues by impact
-  results.violations.forEach(violation => {
+  results.violations.forEach((violation) => {
     switch (violation.impact) {
       case 'critical':
       case 'serious':
@@ -213,17 +208,17 @@ const assessAccessibility = async (flag: boolean) => {
   const rawScore = (0.4 * p2 + 0.8 * p1 + p0) / (p1 + p2 + p0);
 
   // Optionally weight the score
-  const weightedScore = 500 + (rawScore * 500.0);
-  console.log(`minor: ${p0} | minor: ${p1} | minor: ${p2}`)
-  console.log(`Raw score: ${rawScore} | Weighted score: ${weightedScore}`)
+  const weightedScore = 500 + rawScore * 500.0;
+  console.log(`minor: ${p0} | minor: ${p1} | minor: ${p2}`);
+  console.log(`Raw score: ${rawScore} | Weighted score: ${weightedScore}`);
 
   const score = {
     rawScore,
     weightedScore,
     serious: p2,
     moderate: p1,
-    minor: p0
-  }
+    minor: p0,
+  };
 
   if (flag) {
     await fs.writeFile(
@@ -235,16 +230,16 @@ const assessAccessibility = async (flag: boolean) => {
     await fs.writeFile(
       'accessibility-score.json',
       JSON.stringify(score, null, 2),
-      'utf-8'
-    )
+      'utf-8',
+    );
   }
 
   await browser.close();
-  
+
   const accessibilityResult = { score, results };
 
   return accessibilityResult;
-}
+};
 
 // Export functions for use as a module
 export { improveSemantics, improveHtmlSemantics, init, assessAccessibility };
