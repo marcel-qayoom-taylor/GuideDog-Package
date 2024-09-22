@@ -2,8 +2,8 @@ import { OpenAI } from 'openai';
 import * as fs from 'fs/promises';
 import { exec } from 'child_process';
 import readline from 'readline';
-import { runCodeScan } from './codebasescan';
-import { CreateAssistant } from './modelhandler';
+import { runCodeScan } from './CodeBaseScan';
+import { CreateAssistant } from './ModelHandler';
 interface ImproveSemanticsOptions {
   htmlFilePath: string;
   openAIApiKey: string;
@@ -24,7 +24,7 @@ async function init() {
 
     console.log('Assistant "GuideDog" created successfully:');
 
-    await UpdateConfig(assistant);
+    await UpdateConfig(assistant, apiKey);
 
     return assistant;
   } catch (error) {
@@ -44,12 +44,17 @@ async function FixFile(){
 }
 
 async function FixRepo(){
-
+  try{
+    
+  }
+  catch(error){
+    console.log("Error getting suggestions for the Repo: " + error);
+  }
 }
 
-async function UpdateConfig(assistant: OpenAI.Beta.Assistants.Assistant){
+async function UpdateConfig(assistant: OpenAI.Beta.Assistants.Assistant, apiKey: string){
   // Read existing config or create a new one
-  let config: { assistantId: string } = { assistantId: '' }; // TODO: make this a proper config object
+  let config: { assistantId: string; apiKey: string } = { assistantId: '', apiKey: '' };
 
   try {
     const existingConfig = await fs.readFile('guidedog.config.js', 'utf8');
@@ -60,6 +65,7 @@ async function UpdateConfig(assistant: OpenAI.Beta.Assistants.Assistant){
 
   // Append assistantId to the config
   config['assistantId'] = assistant.id;
+  config['apiKey'] = apiKey;
 
   // Write the updated config back to the file
   await fs.writeFile(

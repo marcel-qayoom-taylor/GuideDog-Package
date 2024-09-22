@@ -39,4 +39,8 @@ async function CreateVectorStore(htmlFiles: string[], client: OpenAI): Promise<s
     return vectorStore.id;
   }
 
-  export {CreateAssistant}
+async function SuggestRepoChanges(){
+  
+}
+
+  export {CreateAssistant, SuggestRepoChanges}
