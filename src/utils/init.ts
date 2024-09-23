@@ -10,7 +10,7 @@ async function init(apiKey: string, framework: string) {
 
     const assistant = await CreateAssistant(apiKey, contextFiles);
 
-    const _config = { framework: framework, assistantId: assistant.id }
+    const _config = { framework: framework, assistantId: assistant.id };
     await initConfig(_config);
   } catch (error) {
     throw error;

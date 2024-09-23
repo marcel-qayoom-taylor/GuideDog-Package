@@ -2,12 +2,12 @@ import OpenAI from 'openai';
 import * as fs from 'fs';
 
 export async function CreateAssistant(apiKey: string, htmlFiles: string[]) {
-  console.log('Creating assistant "GuideDog"...')
+  console.log('Creating assistant "GuideDog"...');
   try {
     const client = new OpenAI({ apiKey });
-  
+
     const contextVectorID = await CreateVectorStore(htmlFiles, client);
-  
+
     const assistant = await client.beta.assistants.create({
       name: 'GuideDog',
       instructions:

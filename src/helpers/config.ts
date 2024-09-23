@@ -3,9 +3,9 @@ import * as fs from 'fs';
 import path from 'path';
 
 interface IConfig {
-  framework?: string,
-  assistantId?: string,
-  rules?: any
+  framework?: string;
+  assistantId?: string;
+  rules?: any;
 }
 
 export async function initConfig(_config: IConfig) {
@@ -19,25 +19,35 @@ export async function initConfig(_config: IConfig) {
       configObj = {
         ...configObj,
         framework: _config.framework,
-        assistantId: _config.assistantId
-      }
-      fs.writeFileSync(configPath, `module.exports = ${JSON.stringify(configObj, null, 2)};`);
-
+        assistantId: _config.assistantId,
+      };
+      fs.writeFileSync(
+        configPath,
+        `module.exports = ${JSON.stringify(configObj, null, 2)};`,
+      );
     } else {
       // Write the new config object to the file
-      fs.writeFileSync(configPath, `module.exports = ${JSON.stringify(_config, null, 2)};`, {encoding: 'utf-8'});
+      fs.writeFileSync(
+        configPath,
+        `module.exports = ${JSON.stringify(_config, null, 2)};`,
+        { encoding: 'utf-8' },
+      );
     }
   } catch (error) {
     throw error;
   }
 }
 
-export async function updateConfig(assistant: OpenAI.Beta.Assistants.Assistant) {
+export async function updateConfig(
+  assistant: OpenAI.Beta.Assistants.Assistant,
+) {
   // Read existing config or create a new one
   let config: { assistantId: string } = { assistantId: '' }; // TODO: make this a proper config object
 
   try {
-    const existingConfig = fs.readFileSync('guidedog.config.js', { encoding: 'utf8' });
+    const existingConfig = fs.readFileSync('guidedog.config.js', {
+      encoding: 'utf8',
+    });
     config = JSON.parse(existingConfig);
   } catch (error) {
     console.log('No existing config found, creating a new one.');
@@ -55,7 +65,7 @@ export async function updateConfig(assistant: OpenAI.Beta.Assistants.Assistant) 
   console.log('Configuration saved to guidedog.config.js');
 }
 
-export async function saveAPIKey(apiKey:string) {
+export async function saveAPIKey(apiKey: string) {
   const envPath = path.join(process.cwd(), '.env');
   const apiKeyEntry = `OPENAI_API_KEY=${apiKey}`;
 

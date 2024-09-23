@@ -7,7 +7,9 @@ const program = new Command();
 
 program
   .name('guidedog')
-  .description('An AI powered code library to assist web-developers create more accessible websites and applications.')
+  .description(
+    'An AI powered code library to assist web-developers create more accessible websites and applications.',
+  )
   .version('1.0.0');
 
 program
@@ -31,11 +33,11 @@ program
           choices: ['React', 'Angular', 'Vue', 'Other'],
         },
       ]);
-  
+
       await init(answers.apiKey, answers.framework);
       console.log('✅Init completed!');
     } catch (error) {
-      program.error(`❌Error during initialization: ${error}`)
+      program.error(`❌Error during initialization: ${error}`);
     }
   });
 

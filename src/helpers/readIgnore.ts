@@ -8,12 +8,12 @@ export function readIgnore() {
     const data = fs.readFileSync(ignorePath, 'utf-8');
 
     const ignorePatterns = data
-        .split('\n')
-        .map(line => line.trim())
-        .filter(line => line && !line.startsWith('#')); // Filter out empty lines and comments
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line && !line.startsWith('#')); // Filter out empty lines and comments
 
     return ignorePatterns;
   } catch (error) {
-      return [];
+    return [];
   }
 }
