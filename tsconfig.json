@@ -18,6 +18,11 @@
     /* If transpiling with TypeScript: */
     "module": "Preserve",
 
-    "noEmit": true
+    "noEmit": true,
+
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   }
 }

@@ -1,91 +1,60 @@
 #!/usr/bin/env node
+import { Command } from 'commander';
+import inquirer from 'inquirer';
+import { init, check, fixFile, fixRepo } from './index';
 
-import { assessAccessibility, improveSemantics, init } from './index';
+const program = new Command();
 
-const args = process.argv.slice(2);
+program
+  .name('guidedog')
+  .description(
+    'An AI powered code library to assist web-developers create more accessible websites and applications.',
+  )
+  .version('1.0.0');
 
-if (args.length === 1) {
-  switch (args[0]) {
-    case 'init':
-      (async () => {
-        try {
-          await init();
-        } catch (error) {
-          console.error('Error:', error);
-        } finally {
-          process.exit(0);
-        }
-      })();
-      break;
+program
+  .command('init')
+  .description('Initialize the accessibility config for the repo')
+  .action(async () => {
+    console.log('Starting init...');
+    try {
+      // Use Inquirer to prompt the user with OpenAI key input and framework choices
+      const answers = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'apiKey',
+          message: 'Enter your OpenAI API key:',
+          validate: (input) => input.length > 0 || 'API key cannot be empty',
+        },
+        {
+          type: 'list',
+          name: 'framework',
+          message: 'What framework are you using?',
+          choices: ['React', 'Angular', 'Vue', 'Other'],
+        },
+      ]);
 
-    case 'check':
-      async () => {
-        try {
-          await assessAccessibility(false);
-        } catch (error) {
-          console.error('Error:', error);
-        } finally {
-          process.exit(0);
-        }
-      };
-      break;
+      await init(answers.apiKey, answers.framework);
+      console.log('✅Init completed!');
+    } catch (error) {
+      program.error(`❌Error during initialization: ${error}`);
+    }
+  });
 
-    case 'fix':
-      break;
+program
+  .command('check')
+  .description('Check accessibility of your project')
+  .option('--report', 'Generate a detailed accessibility report')
+  .action((options) => {
+    check(options.report);
+  });
 
-    default:
-      console.error('Invalid command');
-      break;
-  }
-} else if (args.length == 2) {
-  switch (args[0]) {
-    case 'check':
-      if (args[1] == '--report') {
-        async () => {
-          try {
-            await assessAccessibility(true);
-          } catch (error) {
-            console.error('Error:', error);
-          } finally {
-            process.exit(0);
-          }
-        };
-      } else {
-        console.error('Invalid command');
-      }
-      break;
+// TODO: Add option for fixFile
+program
+  .command('fix')
+  .description('Fix accessibility issues in a specific file')
+  .action(() => {
+    fixRepo();
+  });
 
-    default:
-      console.error('Invalid command');
-      break;
-  }
-} else {
-  console.error('Invalid command');
-}
-
-// if (args.length !== 3) {
-//   console.log(
-//     'Usage: npx guidedog improveSemantics <htmlFilePath> <openAIApiKey>',
-//   );
-//   process.exit(1);
-// }
-
-// const [command, htmlFilePath, openAIApiKey] = args;
-
-// if (command !== 'improveSemantics' && command !== 'init') {
-//   console.log(`Unknown command: ${command}`);
-//   console.log(
-//     'Usage: npx guidedog improveSemantics <htmlFilePath> <openAIApiKey> OR npx guidedog init',
-//   );
-//   process.exit(1);
-// }
-
-// Check if either argument is undefined or an empty string
-// if (!htmlFilePath || !openAIApiKey) {
-//   console.error('Both htmlFilePath and openAIApiKey must be provided.');
-//   process.exit(1);
-// }
-
-// improveSemantics(htmlFilePath, openAIApiKey).catch((error) => {
-//   console.error('Error:', error);
-// });
+program.parse(process.argv);
