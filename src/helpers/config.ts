@@ -14,7 +14,6 @@ export async function initConfig(_config: IConfig) {
 
   try {
     if (fs.existsSync(configPath)) {
-      console.log("IN THA LOOP");
       let configObj = await import(configPath);
       configObj = {
         ...configObj,

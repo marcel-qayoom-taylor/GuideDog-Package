@@ -80,6 +80,7 @@ export async function SuggestRepoChanges(apiKey: string, assistantId: string, co
   const jsonResponse = JSON.parse(lastMessage);
   const suggestions = jsonResponse.text.value;
 
+  console.log(suggestions);
   return jsonResponse;
 }
 
