@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { Command } from 'commander';
+import {Command} from 'commander';
 import inquirer from 'inquirer';
 import { init, check, fixFile, fixRepo } from './index';
 
@@ -18,7 +18,8 @@ program
   .action(async () => {
     console.log('Starting init...');
     try {
-      // Use Inquirer to prompt the user with OpenAI key input and framework choices
+      let apiKey = process.env.OPENAI_API_KEY; 
+      
       const answers = await inquirer.prompt([
         {
           type: 'input',
@@ -41,17 +42,19 @@ program
     }
   });
 
-program
-  .command('check')
-  .description('Check accessibility of your project')
-  .option('--report', 'Generate a detailed accessibility report')
-  .action((options) => {
-    check(options.report);
-  });
+//commented out cus errors -r
+
+// program
+//   .command('check')
+//   .description('Check accessibility of your project')
+//   .option('--report', 'Generate a detailed accessibility report')
+//   .action((options) => {
+//     check(options.report);
+//   });
 
 // TODO: Add option for fixFile
 program
-  .command('fix')
+  .command('guide')
   .description('Fix accessibility issues in a specific file')
   .action(() => {
     fixRepo();

@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     /* Base Options: */
+    "typeRoots": ["./node_modules/@types"],
     "esModuleInterop": true,
     "skipLibCheck": true,
     "target": "es2022",

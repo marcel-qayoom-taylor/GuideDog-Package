@@ -22,13 +22,13 @@ export async function CreateAssistant(apiKey: string, htmlFiles: string[]) {
     });
 
     console.log('✅Created assistant "GuideDog"');
-    return assistant;
+    return {assistant, contextVectorID};
   } catch (error) {
     throw error;
   }
 }
 
-async function SuggestRepoChanges(apiKey: string, assistantId: string, contextId: string){
+export async function SuggestRepoChanges(apiKey: string, assistantId: string, contextId: string){
   const client = new OpenAI({ apiKey });
 
   // Prompt should be a string
@@ -61,9 +61,11 @@ async function SuggestRepoChanges(apiKey: string, assistantId: string, contextId
   const messages = await client.beta.threads.messages.list(thread.id, {
     run_id: run.id,
   });
+  console.log(messages);
 
   const lastMessage = messages.data[messages.data.length - 1]?.content;
 
+  console.log(lastMessage);
   if (typeof lastMessage === 'string') {
     try {
       const jsonResponse = JSON.parse(lastMessage);
