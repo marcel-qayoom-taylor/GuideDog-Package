@@ -33,12 +33,25 @@ export async function SuggestRepoChanges(apiKey: string, assistantId: string, co
 
   // Prompt should be a string
   const prompt: string = `
-    Please draw on your file knowledge base to make the following HTML more semantic and accessible. 
-    Consider using header tags instead of just <p> or using <section>/<article> instead of <div> where appropriate. 
-    Return the result as a JSON with a list of objects containing the following data fields and nothing else:
-    Filename, suggestion line number, type of accessibility issue, and suggested code improvement.
-    IT is absolutely imperative that the the output of this query is a parsable json that the code will be able to call json.parse on without any issues. DO NOT ADD ANYTHING ELSE AT ALL I JUST WANT A JSON strinG WITH NO LINE FORMATTING OR ANYTHING ELSE.
-  `;
+  Please analyze the following HTML for accessibility and semantic improvements. 
+  Only return valid JSON with no extra text or code block delimiters or newline characters. 
+  The JSON should be an array of objects with the following fields:
+  - Filename (string)
+  - Suggestion line number (number)
+  - Type of accessibility issue (string)
+  - Suggested code improvement (string)
+  
+  Example:
+  [
+    {
+      "Filename": "index.html",
+      "suggestion line number": 5,
+      "type of accessibility issue": "Lack of semantic structure",
+      "suggested code improvement": "<header><h1>Welcome to my website!</h1></header>"
+    }
+  ]
+  Make sure the response is valid JSON.
+`;
 
   const thread = await client.beta.threads.create({
     messages: [
@@ -62,20 +75,12 @@ export async function SuggestRepoChanges(apiKey: string, assistantId: string, co
     run_id: run.id,
   });
 
-  const lastMessage = messages.data[messages.data.length - 1]?.content;
+  //kinda strange to be converting obj -> json -> obj but for some reason the initial obj throws error when trying to access text field.
+  const lastMessage = JSON.stringify(messages.data[messages.data.length - 1]?.content[0]);
+  const jsonResponse = JSON.parse(lastMessage);
+  const suggestions = jsonResponse.text.value;
 
-  console.log(lastMessage);
-  if (typeof lastMessage === 'string') {
-    try {
-      const jsonResponse = JSON.parse(lastMessage);
-      console.log(jsonResponse);
-      return jsonResponse;
-    } catch (error) {
-      console.error('Error parsing the assistant response as JSON:', error);
-    }
-  } else {
-    console.error('No valid content found in the assistant response.');
-  }
+  return jsonResponse;
 }
 
 async function CreateVectorStore(
