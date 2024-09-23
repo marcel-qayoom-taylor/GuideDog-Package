@@ -27,8 +27,8 @@ You can interact with Guidedog through the command line. Below are the available
 ```bash
 guidedog init
 ```
-Initialize the accessibility configuration for your repository.
 
+Initialize the accessibility configuration for your repository.
 
 This command prompts you for your OpenAI API key and the framework you are using (React, Angular, Vue, or Other).
 
@@ -37,7 +37,8 @@ guidedog check [options]
 ```
 
 Check the accessibility of your project, receive an rating and suggestions.
- - ```--report```: Generate a detailed accessibility report.
+
+- `--report`: Generate a detailed accessibility report.
 
 ```bash
 guidedog fix
@@ -46,11 +47,13 @@ guidedog fix
 Note: This command currently applies fixes to the entire repository. Specific file fixes will be implemented in future updates.
 
 ## Contributing
+
 Contributions are welcome! If you have suggestions or improvements, feel free to open an issue or submit a pull request.
 
 ## License
+
 This project is licensed under the MIT License. See the LICENSE file for more details.
 
 ## Acknowledgements
-Guidedog uses the OpenAI API for enhanced accessibility solutions. Thank you for supporting accessible web development!
 
+Guidedog uses the OpenAI API for enhanced accessibility solutions. Thank you for supporting accessible web development!
