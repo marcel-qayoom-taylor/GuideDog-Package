@@ -1,7 +1,7 @@
 import {SuggestRepoChanges} from '@/helpers/ModelHandler';
 import * as fs from 'fs/promises';
-import config from 'guidedog.config.cjs'; 
 import * as dotenv from 'dotenv';
+import path from 'path';
 
 
 export async function fixFile(dir: string) {
@@ -12,10 +12,11 @@ async function fixRepo(){
   try{    
     dotenv.config();
     const apiKey = process.env.OPENAI_API_KEY;
+    let configObj = await import(path.join(process.cwd(), 'guidedog.config.cjs'));
 
     if(apiKey != null){
-      const assistantId =  config.assistantId;
-      const contextId = config.contextId;
+      const assistantId = configObj.default.assistantId;
+      const contextId = configObj.default.contextId;
   
       const suggestionList = await SuggestRepoChanges(apiKey, assistantId, contextId);
   

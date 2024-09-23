@@ -35,9 +35,9 @@ export async function SuggestRepoChanges(apiKey: string, assistantId: string, co
   const prompt: string = `
     Please draw on your file knowledge base to make the following HTML more semantic and accessible. 
     Consider using header tags instead of just <p> or using <section>/<article> instead of <div> where appropriate. 
-    Do not respond with any other words or content EXCEPT for the HTML code and suggestions.
-    Return the result as a JSON with a list of objects containing the following data fields:
+    Return the result as a JSON with a list of objects containing the following data fields and nothing else:
     Filename, suggestion line number, type of accessibility issue, and suggested code improvement.
+    IT is absolutely imperative that the the output of this query is a parsable json that the code will be able to call json.parse on without any issues. DO NOT ADD ANYTHING ELSE AT ALL I JUST WANT A JSON strinG WITH NO LINE FORMATTING OR ANYTHING ELSE.
   `;
 
   const thread = await client.beta.threads.create({
@@ -61,7 +61,6 @@ export async function SuggestRepoChanges(apiKey: string, assistantId: string, co
   const messages = await client.beta.threads.messages.list(thread.id, {
     run_id: run.id,
   });
-  console.log(messages);
 
   const lastMessage = messages.data[messages.data.length - 1]?.content;
 
