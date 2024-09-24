@@ -22,13 +22,17 @@ export async function CreateAssistant(apiKey: string, htmlFiles: string[]) {
     });
 
     console.log('✅Created assistant "GuideDog"');
-    return {assistant, contextVectorID};
+    return { assistant, contextVectorID };
   } catch (error) {
     throw error;
   }
 }
 
-export async function SuggestRepoChanges(apiKey: string, assistantId: string, contextId: string){
+export async function SuggestRepoChanges(
+  apiKey: string,
+  assistantId: string,
+  contextId: string,
+) {
   const client = new OpenAI({ apiKey });
 
   // Prompt should be a string
@@ -76,7 +80,9 @@ export async function SuggestRepoChanges(apiKey: string, assistantId: string, co
   });
 
   //kinda strange to be converting obj -> json -> obj but for some reason the initial obj throws error when trying to access text field.
-  const lastMessage = JSON.stringify(messages.data[messages.data.length - 1]?.content[0]);
+  const lastMessage = JSON.stringify(
+    messages.data[messages.data.length - 1]?.content[0],
+  );
   const jsonResponse = JSON.parse(lastMessage);
   const suggestions = jsonResponse.text.value;
 

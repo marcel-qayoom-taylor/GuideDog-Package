@@ -19,7 +19,7 @@ export async function initConfig(_config: IConfig) {
         ...configObj,
         framework: _config.framework,
         assistantId: _config.assistantId,
-        contextId: _config.contextId
+        contextId: _config.contextId,
       };
       fs.writeFileSync(
         configPath,

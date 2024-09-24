@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import {Command} from 'commander';
+import { Command } from 'commander';
 import inquirer from 'inquirer';
 import { init, check, fixFile, fixRepo } from './index';
 
@@ -18,8 +18,8 @@ program
   .action(async () => {
     console.log('Starting init...');
     try {
-      let apiKey = process.env.OPENAI_API_KEY; 
-      
+      let apiKey = process.env.OPENAI_API_KEY;
+
       const answers = await inquirer.prompt([
         {
           type: 'input',
