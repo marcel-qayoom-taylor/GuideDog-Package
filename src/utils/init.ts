@@ -8,9 +8,14 @@ async function init(apiKey: string, framework: string) {
     saveAPIKey(apiKey);
     const contextFiles = await runCodeScan();
 
-    const assistant = await CreateAssistant(apiKey, contextFiles);
+    const response = await CreateAssistant(apiKey, contextFiles);
 
-    const _config = { framework: framework, assistantId: assistant.id };
+    const _config = {
+      framework: framework,
+      assistantId: response.assistant.id,
+      contextId: response.contextVectorID,
+    };
+
     await initConfig(_config);
   } catch (error) {
     throw error;

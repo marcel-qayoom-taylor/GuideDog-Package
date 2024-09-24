@@ -5,21 +5,21 @@ import path from 'path';
 interface IConfig {
   framework?: string;
   assistantId?: string;
+  contextId?: string;
   rules?: any;
 }
 
 export async function initConfig(_config: IConfig) {
-  const configPath = path.join(process.cwd(), 'guidedog.config.js');
+  const configPath = path.join(process.cwd(), 'guidedog.config.cjs');
 
   try {
-    // Check if the file exists
     if (fs.existsSync(configPath)) {
-      // Read the existing file
-      let configObj = require(configPath);
+      let configObj = await import(configPath);
       configObj = {
         ...configObj,
         framework: _config.framework,
         assistantId: _config.assistantId,
+        contextId: _config.contextId,
       };
       fs.writeFileSync(
         configPath,
@@ -45,7 +45,7 @@ export async function updateConfig(
   let config: { assistantId: string } = { assistantId: '' }; // TODO: make this a proper config object
 
   try {
-    const existingConfig = fs.readFileSync('guidedog.config.js', {
+    const existingConfig = fs.readFileSync('guidedog.config.cjs', {
       encoding: 'utf8',
     });
     config = JSON.parse(existingConfig);
@@ -58,11 +58,11 @@ export async function updateConfig(
 
   // Write the updated config back to the file
   fs.writeFileSync(
-    'guidedog.config.js',
+    'guidedog.config.cjs',
     `module.exports = ${JSON.stringify(config, null, 2)};`,
     'utf8',
   );
-  console.log('Configuration saved to guidedog.config.js');
+  console.log('Configuration saved to guidedog.config.cjs');
 }
 
 export async function saveAPIKey(apiKey: string) {
