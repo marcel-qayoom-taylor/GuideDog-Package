@@ -1,6 +1,7 @@
 import { OpenAI } from 'openai';
 import * as fs from 'fs';
 import path from 'path';
+import _ from 'lodash';
 
 interface IConfig {
   framework?: string;
@@ -15,12 +16,8 @@ export async function initConfig(_config: IConfig) {
   try {
     if (fs.existsSync(configPath)) {
       let configObj = await import(configPath);
-      configObj = {
-        ...configObj,
-        framework: _config.framework,
-        assistantId: _config.assistantId,
-        contextId: _config.contextId,
-      };
+      configObj = _.merge(configObj.default, _config); // Deep merge the configurations
+
       fs.writeFileSync(
         configPath,
         `module.exports = ${JSON.stringify(configObj, null, 2)};`,
