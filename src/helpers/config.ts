@@ -66,11 +66,18 @@ export async function saveAPIKey(apiKey: string) {
   const envPath = path.join(process.cwd(), '.env');
   const apiKeyEntry = `OPENAI_API_KEY=${apiKey}`;
 
-  // Check if .env file exists
   if (fs.existsSync(envPath)) {
-    // Append the API key if it exists
-    fs.appendFileSync(envPath, `\n${apiKeyEntry}`, { encoding: 'utf8' });
-    console.log('API key appended to .env file.');
+    const fileContents = fs.readFileSync(envPath, { encoding: 'utf8' });
+
+    if (fileContents.includes('OPENAI_API_KEY=')) {
+      const updatedContents = fileContents.replace(/OPENAI_API_KEY=.*/, apiKeyEntry);
+      fs.writeFileSync(envPath, updatedContents, { encoding: 'utf8' });
+      console.log('API key updated in .env file.');
+    }
+    else {
+      fs.appendFileSync(envPath, `\n${apiKeyEntry}`, { encoding: 'utf8' });
+      console.log('API key appended to .env file.');
+    }
   } else {
     // Create a new .env file and add the API key
     fs.writeFileSync(envPath, apiKeyEntry, { encoding: 'utf8' });
