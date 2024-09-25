@@ -33,7 +33,7 @@ program
         });
 
         if (!useExistingKeyResponse.useExistingKey) {
-          apiKey = '';
+          apiKey = ''; // clear api key so it triggers the next input prompt
         }
       }
 
