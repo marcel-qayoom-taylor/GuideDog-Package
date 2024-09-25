@@ -2,8 +2,10 @@
 import { Command } from 'commander';
 import inquirer from 'inquirer';
 import { init, check, fixFile, fixRepo } from './index';
+import * as dotenv from 'dotenv';
 
 const program = new Command();
+dotenv.config();
 
 program
   .name('guidedog')
@@ -18,27 +20,46 @@ program
   .action(async () => {
     console.log('Starting init...');
     try {
-      let apiKey = process.env.OPENAI_API_KEY;
+      let apiKey: string = process.env.OPENAI_API_KEY || '';
 
-      const answers = await inquirer.prompt([
-        {
+      if (apiKey) {
+        console.log('OpenAI API key found in environment variables');
+
+        const useExistingKeyResponse = await inquirer.prompt({
+          type: 'confirm',
+          name: 'useExistingKey',
+          message: 'Do you want to use the existing API key?',
+          default: true,
+        });
+
+        if (!useExistingKeyResponse.useExistingKey) {
+          apiKey = '';
+        }
+      }
+
+      if (!apiKey) {
+        console.log('OpenAI API key not found in environment variables');
+        const apiKeyResponse = await inquirer.prompt({
           type: 'input',
           name: 'apiKey',
           message: 'Enter your OpenAI API key:',
           validate: (input) => input.length > 0 || 'API key cannot be empty',
-        },
-        {
-          type: 'list',
-          name: 'framework',
-          message: 'What framework are you using?',
-          choices: ['React', 'Angular', 'Vue', 'Other'],
-        },
-      ]);
+        });
 
-      await init(answers.apiKey, answers.framework);
-      console.log('✅Init completed!');
+        apiKey = apiKeyResponse.apiKey;
+      }
+
+      const answers = await inquirer.prompt({
+        type: 'list',
+        name: 'framework',
+        message: 'What framework are you using?',
+        choices: ['React', 'Angular', 'Vue', 'Other'],
+      });
+
+      await init(apiKey, answers.framework);
+      console.log('✅ Init completed!');
     } catch (error) {
-      program.error(`❌Error during initialization: ${error}`);
+      program.error(`❌ Error during initialization: ${error}`);
     }
   });
 
