@@ -11,7 +11,10 @@ async function init(apiKey: string, framework: string) {
 
     const runPath = await createNewRun();
 
-    const fileLineBreakdown = await createfileLineBreakdown(contextFiles, runPath);
+    const fileLineBreakdown = await createfileLineBreakdown(
+      contextFiles,
+      runPath,
+    );
 
     const response = await CreateAssistant(apiKey, fileLineBreakdown);
 

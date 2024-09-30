@@ -21,7 +21,7 @@ export async function createfileLineBreakdown(
     if (!fs.existsSync(runPath)) {
       fs.mkdirSync(runPath, { recursive: true });
     }
-    
+
     // Write the mega file to the src directory
     const outputPath = path.join(runPath, 'fileLineBreakdown.json');
     await fs.promises.writeFile(

@@ -75,21 +75,24 @@ export async function createNewRun() {
   // .toJSON is an easy way to give us YYYY-MM-DD-${time} format to avoid using '/'s as that causes issues for path names
   const todaysDate = new Date().toJSON();
 
-  const newRunPath = path.join(process.cwd(), `.guidedog/runs/run-${todaysDate}`)
+  const newRunPath = path.join(
+    process.cwd(),
+    `.guidedog/runs/run-${todaysDate}`,
+  );
 
   try {
-
     if (!fs.existsSync(newRunPath)) {
       fs.mkdirSync(newRunPath, { recursive: true });
     } else {
-      console.log("Run path already exists for this exact time. Returning existing run path.")
+      console.log(
+        'Run path already exists for this exact time. Returning existing run path.',
+      );
     }
 
     return newRunPath;
   } catch (error) {
     throw error;
   }
-
 }
 
 export async function saveAPIKey(apiKey: string) {
