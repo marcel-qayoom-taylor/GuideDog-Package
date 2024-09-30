@@ -10,9 +10,14 @@ interface IConfig {
 }
 
 export async function initConfig(_config: IConfig) {
-  const configPath = path.join(process.cwd(), 'guidedog.config.cjs');
+  const directoryPath = path.join(process.cwd(), '.guidedog');
+  const configPath = path.join(directoryPath, 'guidedog.config.cjs');
 
   try {
+    if (!fs.existsSync(directoryPath)) {
+      fs.mkdirSync(directoryPath);
+    }
+
     if (fs.existsSync(configPath)) {
       let configObj = await import(configPath);
       configObj = {
@@ -45,24 +50,49 @@ export async function updateConfig(
   let config: { assistantId: string } = { assistantId: '' }; // TODO: make this a proper config object
 
   try {
-    const existingConfig = fs.readFileSync('guidedog.config.cjs', {
+    const directoryPath = path.join(process.cwd(), '.guidedog');
+    const configPath = path.join(directoryPath, 'guidedog.config.cjs');
+    const existingConfig = fs.readFileSync(configPath, {
       encoding: 'utf8',
     });
     config = JSON.parse(existingConfig);
+    // Append assistantId to the config
+    config['assistantId'] = assistant.id;
+
+    // Write the updated config back to the file
+    fs.writeFileSync(
+      directoryPath,
+      `module.exports = ${JSON.stringify(config, null, 2)};`,
+      'utf8',
+    );
+    console.log('Configuration saved to .guidedog/guidedog.config.cjs');
   } catch (error) {
     console.log('No existing config found, creating a new one.');
   }
+}
 
-  // Append assistantId to the config
-  config['assistantId'] = assistant.id;
+export async function createNewRun() {
+  // .toJSON is an easy way to give us YYYY-MM-DD-${time} format to avoid using '/'s as that causes issues for path names
+  const todaysDate = new Date().toJSON();
 
-  // Write the updated config back to the file
-  fs.writeFileSync(
-    'guidedog.config.cjs',
-    `module.exports = ${JSON.stringify(config, null, 2)};`,
-    'utf8',
+  const newRunPath = path.join(
+    process.cwd(),
+    `.guidedog/runs/run-${todaysDate}`,
   );
-  console.log('Configuration saved to guidedog.config.cjs');
+
+  try {
+    if (!fs.existsSync(newRunPath)) {
+      fs.mkdirSync(newRunPath, { recursive: true });
+    } else {
+      console.log(
+        'Run path already exists for this exact time. Returning existing run path.',
+      );
+    }
+
+    return newRunPath;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function saveAPIKey(apiKey: string) {
