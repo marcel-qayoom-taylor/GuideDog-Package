@@ -51,7 +51,8 @@ export async function updateConfig(
 
   try {
     const directoryPath = path.join(process.cwd(), '.guidedog');
-    const existingConfig = fs.readFileSync('guidedog.config.cjs', {
+    const configPath = path.join(directoryPath, 'guidedog.config.cjs')
+    const existingConfig = fs.readFileSync(configPath, {
       encoding: 'utf8',
     });
     config = JSON.parse(existingConfig);
