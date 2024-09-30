@@ -37,17 +37,11 @@ export async function SuggestRepoChanges(
 
   // Prompt should be a string
   const prompt: string = `
-  Please analyze the following HTML for accessibility and semantic improvements. 
-  Only return valid JSON with no extra text or code block delimiters or newline characters. 
-
-  You will be provided with a file path to the JSON file. Each key in the json object is a file path. The value for each file path is an array of strings
-  where each string is a line of code from the file. 
-
-  You need to output the following: 
-  
+  Please draw on the vector store knowledge base of repo files to provide accesibility suggestions according to WCAG guidelines.
+  Only return valid JSON with no extra text or code block delimiters or newline characters.
   The JSON should be an array of objects with the following fields:
   - Filename (string)
-  - Suggestion line number (number)
+  - Suggestion line number (number): This should be the line of the original code from the vector store where the suggestions is for. If the suggestions is something that covers multiple lines it should be the first line of the file.
   - Type of accessibility issue (string)
   - Suggested code improvement (string)
   

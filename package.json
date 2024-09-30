@@ -25,6 +25,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.4",
     "@changesets/cli": "^2.27.7",
+    "@types/lodash": "^4.17.9",
     "@types/node": "^22.5.3",
     "prettier": "^3.3.3",
     "ts-node": "^10.9.2",
@@ -63,6 +64,7 @@
     "dotenv": "^16.4.5",
     "glob": "^11.0.0",
     "inquirer": "^11.0.2",
+    "lodash": "^4.17.21",
     "minimatch": "^10.0.1",
     "openai": "^4.57.1",
     "puppeteer": "^23.3.1"
