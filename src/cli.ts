@@ -63,15 +63,20 @@ program
     }
   });
 
-//commented out cus errors -r
-
-// program
-//   .command('check')
-//   .description('Check accessibility of your project')
-//   .option('--report', 'Generate a detailed accessibility report')
-//   .action((options) => {
-//     check(options.report);
-//   });
+program
+  .command('check')
+  .description('Check accessibility of your project')
+  .option('--report', 'Generate a detailed accessibility report')
+  .action((options) => {
+    try {
+      console.log('Starting check...');
+      check(options.report);
+      
+      console.log('Check completed!')
+    } catch (error) {
+      program.error(`❌Error during checking: ${error}`);
+    }
+  });
 
 // TODO: Add option for fixFile
 program

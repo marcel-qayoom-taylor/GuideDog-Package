@@ -5,7 +5,7 @@ export async function CreateAssistant(apiKey: string, htmlFile: string) {
   console.log('Creating assistant "GuideDog"...');
   try {
     const client = new OpenAI({ apiKey });
-
+    // TODO: Put in accessibility criteria file (JSON)
     const contextVectorID = await CreateVectorStore(htmlFile, client);
 
     const assistant = await client.beta.assistants.create({
