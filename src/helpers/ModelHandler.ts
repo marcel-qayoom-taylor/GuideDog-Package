@@ -1,12 +1,12 @@
 import OpenAI from 'openai';
 import * as fs from 'fs';
 
-export async function CreateAssistant(apiKey: string, htmlFiles: string[]) {
+export async function CreateAssistant(apiKey: string, htmlFile: string) {
   console.log('Creating assistant "GuideDog"...');
   try {
     const client = new OpenAI({ apiKey });
 
-    const contextVectorID = await CreateVectorStore(htmlFiles, client);
+    const contextVectorID = await CreateVectorStore(htmlFile, client);
 
     const assistant = await client.beta.assistants.create({
       name: 'GuideDog',
@@ -37,7 +37,7 @@ export async function SuggestRepoChanges(
 
   // Prompt should be a string
   const prompt: string = `
-  Please draw on the vector store knowledge base of repo files to provide accesibility suggestiosn according to WCAG guidelines.
+  Please draw on the vector store knowledge base of repo files to provide accesibility suggestions according to WCAG guidelines.
   Only return valid JSON with no extra text or code block delimiters or newline characters.
   The JSON should be an array of objects with the following fields:
   - Filename (string)
@@ -91,19 +91,17 @@ export async function SuggestRepoChanges(
 }
 
 async function CreateVectorStore(
-  htmlFiles: string[],
+  htmlFile: string,
   client: OpenAI,
 ): Promise<string> {
-  const fileStreams = htmlFiles.map((filePath) =>
-    fs.createReadStream(filePath),
-  );
+  const fileStream = fs.createReadStream(htmlFile);
 
   let vectorStore = await client.beta.vectorStores.create({
     name: 'Codebase Context',
   });
 
   await client.beta.vectorStores.fileBatches.uploadAndPoll(vectorStore.id, {
-    files: fileStreams,
+    files: [fileStream],
   });
 
   return vectorStore.id;

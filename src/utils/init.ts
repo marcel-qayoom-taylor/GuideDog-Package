@@ -1,6 +1,7 @@
 import { runCodeScan } from '@/helpers/CodeBaseScan';
 import { CreateAssistant } from '@/helpers/ModelHandler';
 import { initConfig, saveAPIKey } from '@/helpers/config';
+import { createfileLineBreakdown } from '@/helpers/FileLineBreakdown';
 
 // Start Generation Here
 async function init(apiKey: string, framework: string) {
@@ -8,7 +9,9 @@ async function init(apiKey: string, framework: string) {
     saveAPIKey(apiKey);
     const contextFiles = await runCodeScan();
 
-    const response = await CreateAssistant(apiKey, contextFiles);
+    const fileLineBreakdown = await createfileLineBreakdown(contextFiles);
+
+    const response = await CreateAssistant(apiKey, fileLineBreakdown);
 
     const _config = {
       framework: framework,
