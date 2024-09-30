@@ -1,12 +1,12 @@
 import OpenAI from 'openai';
 import * as fs from 'fs';
 
-export async function CreateAssistant(apiKey: string, htmlFiles: string[]) {
+export async function CreateAssistant(apiKey: string, htmlFile: string) {
   console.log('Creating assistant "GuideDog"...');
   try {
     const client = new OpenAI({ apiKey });
 
-    const contextVectorID = await CreateVectorStore(htmlFiles, client);
+    const contextVectorID = await CreateVectorStore(htmlFile, client);
 
     const assistant = await client.beta.assistants.create({
       name: 'GuideDog',
@@ -39,6 +39,12 @@ export async function SuggestRepoChanges(
   const prompt: string = `
   Please analyze the following HTML for accessibility and semantic improvements. 
   Only return valid JSON with no extra text or code block delimiters or newline characters. 
+
+  You will be provided with a file path to the JSON file. Each key in the json object is a file path. The value for each file path is an array of strings
+  where each string is a line of code from the file. 
+
+  You need to output the following: 
+  
   The JSON should be an array of objects with the following fields:
   - Filename (string)
   - Suggestion line number (number)
@@ -91,19 +97,17 @@ export async function SuggestRepoChanges(
 }
 
 async function CreateVectorStore(
-  htmlFiles: string[],
+  htmlFile: string,
   client: OpenAI,
 ): Promise<string> {
-  const fileStreams = htmlFiles.map((filePath) =>
-    fs.createReadStream(filePath),
-  );
+  const fileStream = fs.createReadStream(htmlFile);
 
   let vectorStore = await client.beta.vectorStores.create({
     name: 'Codebase Context',
   });
 
   await client.beta.vectorStores.fileBatches.uploadAndPoll(vectorStore.id, {
-    files: fileStreams,
+    files: [fileStream],
   });
 
   return vectorStore.id;
