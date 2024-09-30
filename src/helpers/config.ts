@@ -10,9 +10,14 @@ interface IConfig {
 }
 
 export async function initConfig(_config: IConfig) {
-  const configPath = path.join(process.cwd(), 'guidedog.config.cjs');
-
+  const directoryPath = path.join(process.cwd(), '.guidedog')
+  const configPath = path.join(directoryPath, 'guidedog.config.cjs');  
+  
   try {
+    if (!fs.existsSync(directoryPath)) {
+      fs.mkdirSync(directoryPath)
+    }
+
     if (fs.existsSync(configPath)) {
       let configObj = await import(configPath);
       configObj = {
@@ -45,24 +50,24 @@ export async function updateConfig(
   let config: { assistantId: string } = { assistantId: '' }; // TODO: make this a proper config object
 
   try {
+    const directoryPath = path.join(process.cwd(), '.guidedog');
     const existingConfig = fs.readFileSync('guidedog.config.cjs', {
       encoding: 'utf8',
     });
     config = JSON.parse(existingConfig);
+    // Append assistantId to the config
+    config['assistantId'] = assistant.id;
+
+    // Write the updated config back to the file
+    fs.writeFileSync(
+      directoryPath,
+      `module.exports = ${JSON.stringify(config, null, 2)};`,
+      'utf8',
+    );
+    console.log('Configuration saved to .guidedog/guidedog.config.cjs');
   } catch (error) {
     console.log('No existing config found, creating a new one.');
   }
-
-  // Append assistantId to the config
-  config['assistantId'] = assistant.id;
-
-  // Write the updated config back to the file
-  fs.writeFileSync(
-    'guidedog.config.cjs',
-    `module.exports = ${JSON.stringify(config, null, 2)};`,
-    'utf8',
-  );
-  console.log('Configuration saved to guidedog.config.cjs');
 }
 
 export async function saveAPIKey(apiKey: string) {

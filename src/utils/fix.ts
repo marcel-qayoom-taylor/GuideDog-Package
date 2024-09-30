@@ -11,8 +11,9 @@ async function fixRepo() {
   try {
     dotenv.config();
     const apiKey = process.env.OPENAI_API_KEY;
+    const directoryPath = path.join(process.cwd(), '.guidedog')
     let configObj = await import(
-      path.join(process.cwd(), 'guidedog.config.cjs')
+      path.join(directoryPath, 'guidedog.config.cjs')
     );
 
     if (apiKey != null) {
