@@ -4,6 +4,7 @@ import * as fs from 'fs';
 
 export async function createfileLineBreakdown(
   filePaths: string[],
+  runPath: string,
 ): Promise<string> {
   console.log('Creating fileLineBreakdown file...');
   const fileLineBreakdown: { [key: string]: string[] } = {}; // Initialize as an object
@@ -17,13 +18,12 @@ export async function createfileLineBreakdown(
       );
     }
 
-    const directoryPath = path.join(process.cwd(), '.guidedog');
-
-    if (!fs.existsSync(directoryPath)) {
-      fs.mkdirSync(directoryPath);
+    if (!fs.existsSync(runPath)) {
+      fs.mkdirSync(runPath, { recursive: true });
     }
+    
     // Write the mega file to the src directory
-    const outputPath = path.join(directoryPath, 'fileLineBreakdown.json');
+    const outputPath = path.join(runPath, 'fileLineBreakdown.json');
     await fs.promises.writeFile(
       outputPath,
       JSON.stringify(fileLineBreakdown, null, 2),
