@@ -10,12 +10,12 @@ interface IConfig {
 }
 
 export async function initConfig(_config: IConfig) {
-  const directoryPath = path.join(process.cwd(), '.guidedog')
-  const configPath = path.join(directoryPath, 'guidedog.config.cjs');  
-  
+  const directoryPath = path.join(process.cwd(), '.guidedog');
+  const configPath = path.join(directoryPath, 'guidedog.config.cjs');
+
   try {
     if (!fs.existsSync(directoryPath)) {
-      fs.mkdirSync(directoryPath)
+      fs.mkdirSync(directoryPath);
     }
 
     if (fs.existsSync(configPath)) {
@@ -51,7 +51,7 @@ export async function updateConfig(
 
   try {
     const directoryPath = path.join(process.cwd(), '.guidedog');
-    const configPath = path.join(directoryPath, 'guidedog.config.cjs')
+    const configPath = path.join(directoryPath, 'guidedog.config.cjs');
     const existingConfig = fs.readFileSync(configPath, {
       encoding: 'utf8',
     });
