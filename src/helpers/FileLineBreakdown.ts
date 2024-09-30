@@ -1,5 +1,6 @@
 // src/helpers/createfileLineBreakdown.ts
-import { promises as fs } from 'fs'; // Use promises API
+import path from 'path';
+import * as fs from 'fs';
 
 export async function createfileLineBreakdown(
   filePaths: string[],
@@ -9,16 +10,21 @@ export async function createfileLineBreakdown(
 
   try {
     for (const filePath of filePaths) {
-      const content: string = await fs.readFile(filePath, 'utf8'); // Read file as string
+      const content: string = await fs.promises.readFile(filePath, 'utf8'); // Read file as string
       const code = content.split('\n');
       fileLineBreakdown[filePath] = code.map(
         (line, index) => `${index + 1}: ${line}`,
       );
     }
 
+    const directoryPath = path.join(process.cwd(), '.guidedog')
+
+    if (!fs.existsSync(directoryPath)) {
+      fs.mkdirSync(directoryPath)
+    }
     // Write the mega file to the src directory
-    const outputPath = 'src/fileLineBreakdown.json';
-    await fs.writeFile(
+    const outputPath = path.join(directoryPath, 'fileLineBreakdown.json') 
+    await fs.promises.writeFile(
       outputPath,
       JSON.stringify(fileLineBreakdown, null, 2),
       'utf8',

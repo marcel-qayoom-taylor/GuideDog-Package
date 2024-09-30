@@ -1,5 +1,5 @@
 module.exports = {
   "framework": "Other",
-  "assistantId": "3",
-  "contextId": "vs_9zR3Fdxm1oD4kTpO91oRG9dj"
+  "assistantId": "asst_jIArjADsp03fzngvBb4awYFn",
+  "contextId": "vs_C8wFGcDmLNRPxTbHoRRkBsxk"
 };
