@@ -70,11 +70,13 @@ export async function saveAPIKey(apiKey: string) {
     const fileContents = fs.readFileSync(envPath, { encoding: 'utf8' });
 
     if (fileContents.includes('OPENAI_API_KEY=')) {
-      const updatedContents = fileContents.replace(/OPENAI_API_KEY=.*/, apiKeyEntry);
+      const updatedContents = fileContents.replace(
+        /OPENAI_API_KEY=.*/,
+        apiKeyEntry,
+      );
       fs.writeFileSync(envPath, updatedContents, { encoding: 'utf8' });
       console.log('API key updated in .env file.');
-    }
-    else {
+    } else {
       fs.appendFileSync(envPath, `\n${apiKeyEntry}`, { encoding: 'utf8' });
       console.log('API key appended to .env file.');
     }
