@@ -14,7 +14,6 @@ const DIR_PATH = path.join(process.cwd(), '.guidedog');
 const CONFIG_PATH = path.join(DIR_PATH, 'guidedog.config.cjs');
 
 export async function initConfig(_config: IConfig) {
-
   try {
     if (!fs.existsSync(DIR_PATH)) {
       fs.mkdirSync(DIR_PATH);
@@ -49,7 +48,7 @@ export const getConfig = async (): Promise<IConfig | undefined> => {
   } catch (error) {
     throw 'Error: Configuration file can not be found';
   }
-}
+};
 
 export async function updateConfig(
   assistant: OpenAI.Beta.Assistants.Assistant,

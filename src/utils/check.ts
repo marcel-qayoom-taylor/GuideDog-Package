@@ -4,29 +4,36 @@ import * as fs from 'fs';
 import { exec } from 'child_process';
 import { getConfig } from '@/helpers/config';
 
-const retry = async (url: string, resolve: any, retries: number = 5, delay: number = 5000) => {
-
+const retry = async (
+  url: string,
+  resolve: any,
+  retries: number = 5,
+  delay: number = 5000,
+) => {
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
-      await new Promise(res => setTimeout(res, delay));
+      await new Promise((res) => setTimeout(res, delay));
 
       const response = await fetch(url);
 
       if (response.ok) {
-        console.log("Build is up and running.");
+        console.log('Build is up and running.');
         resolve();
         return;
       } else {
-        console.log(`Serving attempt ${attempt + 1} failed: Server is not up yet. Retrying...`);
+        console.log(
+          `Serving attempt ${attempt + 1} failed: Server is not up yet. Retrying...`,
+        );
       }
-    }
-    catch (error) {
-      console.log(`Serving attempt ${attempt + 1} failed: ${error}. Retrying...`);
+    } catch (error) {
+      console.log(
+        `Serving attempt ${attempt + 1} failed: ${error}. Retrying...`,
+      );
     }
   }
 
   throw `Server failed to start after ${retries} attempts.`;
-}
+};
 
 const build = async (cmd: string) =>
   new Promise<void>((resolve, reject) => {
@@ -42,7 +49,6 @@ const build = async (cmd: string) =>
     });
   });
 
-
 const serveBuild = async (cmd: string) =>
   new Promise<{ serverProcess: any }>((resolve, reject) => {
     const serverProcess = exec(cmd, (error, stdout, stderr) => {
@@ -56,16 +62,15 @@ const serveBuild = async (cmd: string) =>
     });
 
     const url = 'http://localhost:3000/';
-    retry(url, () => resolve({ serverProcess }))
-      .catch(reject);
+    retry(url, () => resolve({ serverProcess })).catch(reject);
   });
 
 const stopServer = (serverProcess: any) => {
   try {
-    process.kill(serverProcess.pid + 1,'SIGTERM');
-    process.exit(0)
+    process.kill(serverProcess.pid + 1, 'SIGTERM');
+    process.exit(0);
   } catch (error) {
-    throw (`Error stopping the server: ${error}`);
+    throw `Error stopping the server: ${error}`;
   }
 };
 
@@ -94,13 +99,13 @@ export async function check(flag: boolean) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(`http://localhost:3000`);
-  
+
     const results = await new AxePuppeteer(page).analyze();
-  
+
     let p2 = 0; // Critical and Serious issues
     let p1 = 0; // Moderate issues
     let p0 = 0; // Minor issues
-  
+
     results.violations.forEach((violation) => {
       violation.nodes.forEach((node) => console.log(node));
     });
@@ -120,15 +125,15 @@ export async function check(flag: boolean) {
           break;
       }
     });
-  
+
     // Calculate the raw score
-    const rawScore = (((0.4 * p2 + 0.8 * p1 + p0) / (p1 + p2 + p0)).toFixed(2));
-  
+    const rawScore = ((0.4 * p2 + 0.8 * p1 + p0) / (p1 + p2 + p0)).toFixed(2);
+
     // Optionally weight the score
     const weightedScore = 500 + parseFloat(rawScore) * 500.0;
     console.log(`minor: ${p0} | moderate: ${p1} | critical: ${p2}`);
     console.log(`Raw score: ${rawScore} | Weighted score: ${weightedScore}`);
-  
+
     const score = {
       rawScore,
       weightedScore,
@@ -136,30 +141,29 @@ export async function check(flag: boolean) {
       moderate: p1,
       minor: p0,
     };
-  
+
     if (flag) {
       fs.writeFileSync(
         'accessibility-results.json',
         JSON.stringify(results, null, 2),
         'utf8',
       );
-  
+
       fs.writeFileSync(
         'accessibility-score.json',
         JSON.stringify(score, null, 2),
         'utf-8',
       );
     }
-  
+
     await browser.close();
-  
+
     const accessibilityResult = { score: score, violation: results.violations };
-  
+
     return accessibilityResult;
   } catch (error) {
     throw error;
   } finally {
-    if (serverProcess)
-      stopServer(serverProcess);
+    if (serverProcess) stopServer(serverProcess);
   }
 }

@@ -72,8 +72,8 @@ program
       console.log('Starting check...');
 
       await check(options.report);
-      
-      console.log('✅ Check completed!')
+
+      console.log('✅ Check completed!');
     } catch (error) {
       program.error(`❌Error during checking:\n${error}`);
     }
