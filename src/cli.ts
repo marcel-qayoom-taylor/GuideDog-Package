@@ -59,7 +59,7 @@ program
       await init(apiKey, answers.framework);
       console.log('✅ Init completed!');
     } catch (error) {
-      program.error(`❌ Error during initialization: ${error}`);
+      program.error(`❌ Error during initialization:\n${error}`);
     }
   });
 
@@ -67,14 +67,15 @@ program
   .command('check')
   .description('Check accessibility of your project')
   .option('--report', 'Generate a detailed accessibility report')
-  .action((options) => {
+  .action(async (options) => {
     try {
       console.log('Starting check...');
-      check(options.report);
+
+      await check(options.report);
       
-      console.log('Check completed!')
+      console.log('✅ Check completed!')
     } catch (error) {
-      program.error(`❌Error during checking: ${error}`);
+      program.error(`❌Error during checking:\n${error}`);
     }
   });
 
