@@ -10,27 +10,27 @@ interface IConfig {
   rules?: any;
 }
 
-export async function initConfig(_config: IConfig) {
-  const directoryPath = path.join(process.cwd(), '.guidedog');
-  const configPath = path.join(directoryPath, 'guidedog.config.cjs');
+export const DIR_PATH = path.join(process.cwd(), '.guidedog');
+export const CONFIG_PATH = path.join(DIR_PATH, 'guidedog.config.cjs');
 
+export async function initConfig(_config: IConfig) {
   try {
-    if (!fs.existsSync(directoryPath)) {
-      fs.mkdirSync(directoryPath);
+    if (!fs.existsSync(DIR_PATH)) {
+      fs.mkdirSync(DIR_PATH);
     }
 
-    if (fs.existsSync(configPath)) {
-      let configObj = await import(configPath);
+    if (fs.existsSync(CONFIG_PATH)) {
+      let configObj = await import(CONFIG_PATH);
       configObj = _.merge(configObj.default, _config); // Deep merge the configurations
 
       fs.writeFileSync(
-        configPath,
+        CONFIG_PATH,
         `module.exports = ${JSON.stringify(configObj, null, 2)};`,
       );
     } else {
       // Write the new config object to the file
       fs.writeFileSync(
-        configPath,
+        CONFIG_PATH,
         `module.exports = ${JSON.stringify(_config, null, 2)};`,
         { encoding: 'utf-8' },
       );
@@ -40,6 +40,16 @@ export async function initConfig(_config: IConfig) {
   }
 }
 
+export const getConfig = async (): Promise<IConfig | undefined> => {
+  try {
+    const _config = await import(CONFIG_PATH);
+
+    return _config.default;
+  } catch (error) {
+    throw 'Error: Configuration file can not be found';
+  }
+};
+
 export async function updateConfig(
   assistant: OpenAI.Beta.Assistants.Assistant,
 ) {
@@ -47,9 +57,7 @@ export async function updateConfig(
   let config: { assistantId: string } = { assistantId: '' }; // TODO: make this a proper config object
 
   try {
-    const directoryPath = path.join(process.cwd(), '.guidedog');
-    const configPath = path.join(directoryPath, 'guidedog.config.cjs');
-    const existingConfig = fs.readFileSync(configPath, {
+    const existingConfig = fs.readFileSync(CONFIG_PATH, {
       encoding: 'utf8',
     });
     config = JSON.parse(existingConfig);
@@ -58,7 +66,7 @@ export async function updateConfig(
 
     // Write the updated config back to the file
     fs.writeFileSync(
-      directoryPath,
+      DIR_PATH,
       `module.exports = ${JSON.stringify(config, null, 2)};`,
       'utf8',
     );
