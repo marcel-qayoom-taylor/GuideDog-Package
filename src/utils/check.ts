@@ -2,7 +2,8 @@ import { AxePuppeteer } from '@axe-core/puppeteer';
 import puppeteer from 'puppeteer';
 import * as fs from 'fs';
 import { exec } from 'child_process';
-import { getConfig } from '@/helpers/config';
+import { getConfig, DIR_PATH } from '@/helpers/config';
+import path from 'path';
 
 const retry = async (
   url: string,
@@ -144,13 +145,13 @@ export async function check(flag: boolean) {
 
     if (flag) {
       fs.writeFileSync(
-        'accessibility-results.json',
+        path.join(DIR_PATH, 'accessibility-results.json'),
         JSON.stringify(results, null, 2),
         'utf8',
       );
 
       fs.writeFileSync(
-        'accessibility-score.json',
+        path.join(DIR_PATH, 'accessibility-score.json'),
         JSON.stringify(score, null, 2),
         'utf-8',
       );

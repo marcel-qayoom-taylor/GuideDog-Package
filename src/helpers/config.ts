@@ -10,8 +10,8 @@ interface IConfig {
   rules?: any;
 }
 
-const DIR_PATH = path.join(process.cwd(), '.guidedog');
-const CONFIG_PATH = path.join(DIR_PATH, 'guidedog.config.cjs');
+export const DIR_PATH = path.join(process.cwd(), '.guidedog');
+export const CONFIG_PATH = path.join(DIR_PATH, 'guidedog.config.cjs');
 
 export async function initConfig(_config: IConfig) {
   try {
