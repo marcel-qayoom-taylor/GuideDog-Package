@@ -37,25 +37,80 @@ export async function SuggestRepoChanges(
 
   // Prompt should be a string
   const prompt: string = `
-  Please draw on the vector store knowledge base of repo files to provide accesibility suggestions according to WCAG guidelines.
-  Only return valid JSON with no extra text or code block delimiters or newline characters.
-  The JSON should be an array of objects with the following fields:
-  - Filename (string)
-  - Suggestion line number (number): This should be the line of the original code from the vector store where the suggestions is for. If the suggestions is something that covers multiple lines it should be the first line of the file.
-  - Type of accessibility issue (string)
-  - Suggested code improvement (string)
-  
-  Example:
-  [
+    Please use the vector store of repo files, which contains full file contents, to analyze accessibility issues according to WCAG 2.2 guidelines. Based on the issues identified, provide suggestions for code improvements.
+    The axe-core results are provided in JSON format and should be combined with the code from the vector store to generate suggestions.
+
+    Ensre to return a valid JSON, with no extra text, code block delimiters, or newlines. The JSON should be an array of objects, where each object represents a file with accessibility issues.
+    Each object should contain the following fields:
+    - fileName (string): The file's name.
+    - issues (array of objects): An array of objects, where each object represents an issue in the file with the following fields:
+      - location (array of numbers): [line, column] The exact line and column of the issue.
+      - type (string): The type of accessibility issue, based on predefined WCAG guidelines.
+      - improvement (string): The suggested code improvement to fix the issue. For multiline fixes, suggest a string of complete code block that addresses the issue.
+    If some issues can't be automatically resolved, provide a message with relevant keywords for users to search and resolve the issue manually.
+
+    Example of output:
+    [
+      {
+        "fileName": "index.html",
+        "issues": [
+          {
+            "location": [5,1], 
+            "type": "Lack of semantic structure", 
+            "improvement": "<header><h1>Welcome to my website!</h1></header>"
+          },
+          {
+            "location": [10,3], 
+            "type": "Missing aria-label", 
+            "improvement": "<button aria-label='submit'>Submit</button>"
+          }
+        ]
+      },
+      {
+        "fileName": "app.js",
+        "issues": [
+          {
+            "location": [20,1], 
+            "type": "Insufficient color contrast", 
+            "improvement": "Ensure contrast ratio of 4.5:1 between text and background"
+          }
+        ]
+      }
+    ]
+    Make sure the response is valid JSON.
+
+    In addition to your own analysis, please also include information from axe-core's accessibility check results. If possible, map these issues to the relevant lines of the codebase and link any cross-file relationships. Here is a sample format for axe-core violations:
+    Example of axe-core results:
     {
-      "Filename": "index.html",
-      "suggestion line number": 5,
-      "type of accessibility issue": "Lack of semantic structure",
-      "suggested code improvement": "<header><h1>Welcome to my website!</h1></header>"
+      "testEngine": {
+        "name": "axe-core",
+        "version": "4.10.0"
+      },
+      "testEnvironment": {
+        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/128.0.0.0 Safari/537.36",
+        "windowWidth": 800,
+        "windowHeight": 600,
+        "orientationAngle": 0,
+        "orientationType": "portrait-primary"
+      },
+      "timestamp": "2024-10-02T16:00:01.190Z",
+      "url": "http://localhost:3000/",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodes": [
+            {
+              "html": "<span>Some element</span>",
+              "target": ["fileName > span"],
+              "failureSummary": "Element has insufficient color contrast"
+            }
+          ]
+        }
+      ]
     }
-  ]
-  Make sure the response is valid JSON.
-`;
+  `;
 
   const thread = await client.beta.threads.create({
     messages: [
