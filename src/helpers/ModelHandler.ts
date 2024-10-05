@@ -1,28 +1,32 @@
 import OpenAI from 'openai';
 import * as fs from 'fs';
+import { getOpenAIClient } from './openaiClient';
+import { getConfig } from './config';
 
-export async function CreateAssistant(apiKey: string, htmlFile: string) {
+export async function CreateAssistant() {
   console.log('Creating assistant "GuideDog"...');
   try {
-    const client = new OpenAI({ apiKey });
-    // TODO: Put in accessibility criteria file (JSON)
-    const contextVectorID = await CreateVectorStore(htmlFile, client);
+    let client = getOpenAIClient();
+
+    const vectorStore = await client.beta.vectorStores.create({
+      name: 'Codebase Context',
+    });
 
     const assistant = await client.beta.assistants.create({
       name: 'GuideDog',
       instructions:
-        'You are an expert frontend developer that is tasked with helping me improve the accessibility of my frontend code.',
+        'You are an expert frontend developer tasked with helping me improve the accessibility of my frontend code according to WCAG 2.2 guidelines.',
       tools: [{ type: 'file_search' }],
       tool_resources: {
         file_search: {
-          vector_store_ids: [contextVectorID],
+          vector_store_ids: [vectorStore.id],
         },
       },
       model: 'gpt-4o-mini',
     });
 
-    console.log('✅Created assistant "GuideDog"');
-    return { assistant, contextVectorID };
+    console.log('Created assistant "GuideDog"');
+    return { assistant, contextVectorID: vectorStore.id };
   } catch (error) {
     throw error;
   }
@@ -143,21 +147,4 @@ export async function SuggestRepoChanges(
 
   console.log(suggestions);
   return jsonResponse;
-}
-
-async function CreateVectorStore(
-  htmlFile: string,
-  client: OpenAI,
-): Promise<string> {
-  const fileStream = fs.createReadStream(htmlFile);
-
-  let vectorStore = await client.beta.vectorStores.create({
-    name: 'Codebase Context',
-  });
-
-  await client.beta.vectorStores.fileBatches.uploadAndPoll(vectorStore.id, {
-    files: [fileStream],
-  });
-
-  return vectorStore.id;
 }
