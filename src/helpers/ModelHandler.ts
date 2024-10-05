@@ -148,3 +148,23 @@ export async function SuggestRepoChanges(
   console.log(suggestions);
   return jsonResponse;
 }
+
+export async function uploadFiles(
+  uploadingFiles: string[],
+): Promise<void> {
+  try {
+    const client = getOpenAIClient();
+    const _config = await getConfig();
+
+    if (!_config?.contextId)
+      throw new Error('Missing context id in configuration file!');
+
+    const fileStreams = uploadingFiles.map(file => fs.createReadStream(file));
+  
+    await client.beta.vectorStores.fileBatches.uploadAndPoll(_config.contextId, {
+      files: fileStreams,
+    });
+  } catch (error) {
+    throw error;
+  }
+}
