@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import inquirer from 'inquirer';
-import { init, check, fixFile, fixRepo } from './index';
+import { init, check, fixRepo, applyAllSuggestions, applySingleSuggestion} from './index';
 import * as dotenv from 'dotenv';
 
 const program = new Command();

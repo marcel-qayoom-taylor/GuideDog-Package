@@ -3,10 +3,6 @@ import * as fs from 'fs/promises';
 import * as dotenv from 'dotenv';
 import path from 'path';
 
-export async function fixFile(dir: string) {
-  console.log(`fix specific file at [${dir}]`);
-}
-
 async function fixRepo() {
   try {
     dotenv.config();
