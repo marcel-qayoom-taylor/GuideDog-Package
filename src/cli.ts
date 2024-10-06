@@ -79,7 +79,7 @@ program
         await check('report');
       } else if (options.score) {
         await check('score');
-      }else {
+      } else {
         await check();
       }
 
@@ -103,7 +103,7 @@ program
         type: 'list',
         name: 'scope',
         message: 'Do you want to fix the whole repository or a specific file?',
-        choices: ['Whole repo', 'Specific file']
+        choices: ['Whole repo', 'Specific file'],
       });
 
       if (scopeRes.scope == 'Specific file') {
@@ -124,12 +124,11 @@ program
 
         const file = path.join(DIR_PATH, fileRes.filePath);
         fixFile(file);
-      }
-      else {
+      } else {
         fixRepo();
       }
 
-      console.log('✅ Fix completed!')
+      console.log('✅ Fix completed!');
     } catch (error) {
       program.error(`❌ Error during fixing:\n${error}`);
     }

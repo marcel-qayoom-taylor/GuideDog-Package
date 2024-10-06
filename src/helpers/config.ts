@@ -38,11 +38,9 @@ export async function initConfig(_config: IConfig) {
       );
     }
 
-    fs.writeFileSync(
-      path.join(DIR_PATH, 'wcag.json'),
-      JSON.stringify(wcag),
-      { encoding: 'utf-8' }
-    )
+    fs.writeFileSync(path.join(DIR_PATH, 'wcag.json'), JSON.stringify(wcag), {
+      encoding: 'utf-8',
+    });
   } catch (error) {
     throw error;
   }
@@ -50,7 +48,7 @@ export async function initConfig(_config: IConfig) {
 
 export const getConfig = async (): Promise<IConfig> => {
   try {
-    const _config:IConfig = (await import(CONFIG_PATH)).default;
+    const _config: IConfig = (await import(CONFIG_PATH)).default;
 
     if (!_config) {
       throw new Error('Configuration file can not be found');

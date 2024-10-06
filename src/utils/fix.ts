@@ -19,10 +19,7 @@ async function fixRepo() {
       const assistantId = configObj.default.assistantId;
       const contextId = configObj.default.contextId;
 
-      const suggestionList = await suggestRepoChanges(
-        assistantId,
-        contextId,
-      );
+      const suggestionList = await suggestRepoChanges(assistantId, contextId);
 
       return suggestionList;
     } else {

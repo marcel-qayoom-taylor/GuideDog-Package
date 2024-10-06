@@ -14,7 +14,7 @@ export async function CreateAssistant() {
 
     const assistant = await client.beta.assistants.create({
       name: 'GuideDog',
-      instructions:`
+      instructions: `
         You are an expert frontend developer in ReactJS, VueJS, Angular and Web accessibility and tasked with helping me improve the accessibility of my frontend code according to WCAG 2.2 guidelines.
       `,
       tools: [{ type: 'file_search' }],
@@ -39,7 +39,9 @@ export async function suggestRepoChanges(
 ) {
   try {
     if (!assistantId || !contextId) {
-      throw new Error('assistantId or contextId cannot be found in configuration file')
+      throw new Error(
+        'assistantId or contextId cannot be found in configuration file',
+      );
     }
 
     const client = getOpenAIClient();
@@ -235,9 +237,7 @@ export async function suggestRepoChanges(
     });
 
     // kinda strange to be converting obj -> json -> obj but for some reason the initial obj throws error when trying to access text field.
-    const lastMessage = JSON.stringify(
-      messages.data.pop()?.content[0],
-    );
+    const lastMessage = JSON.stringify(messages.data.pop()?.content[0]);
 
     if (!lastMessage || typeof lastMessage !== 'string') {
       throw new Error('Invalid message format or empty response');
@@ -252,9 +252,7 @@ export async function suggestRepoChanges(
   }
 }
 
-export async function uploadFiles(
-  uploadingFiles: string[],
-): Promise<void> {
+export async function uploadFiles(uploadingFiles: string[]): Promise<void> {
   try {
     const client = getOpenAIClient();
     const _config = await getConfig();
@@ -262,11 +260,14 @@ export async function uploadFiles(
     if (!_config?.contextId)
       throw new Error('Missing context id in configuration file!');
 
-    const fileStreams = uploadingFiles.map(file => fs.createReadStream(file));
-  
-    await client.beta.vectorStores.fileBatches.uploadAndPoll(_config.contextId, {
-      files: fileStreams,
-    });
+    const fileStreams = uploadingFiles.map((file) => fs.createReadStream(file));
+
+    await client.beta.vectorStores.fileBatches.uploadAndPoll(
+      _config.contextId,
+      {
+        files: fileStreams,
+      },
+    );
   } catch (error) {
     throw error;
   }

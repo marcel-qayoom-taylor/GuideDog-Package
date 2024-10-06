@@ -30,7 +30,10 @@ export async function runCodeScan(): Promise<string[]> {
 
 export async function getUploadingFiles(timestamp: string): Promise<string[]> {
   try {
-    const patterns = [`${DIR_PATH}/wcag.json`, `${RUNS_PATH}/run-${timestamp}/*`];
+    const patterns = [
+      `${DIR_PATH}/wcag.json`,
+      `${RUNS_PATH}/run-${timestamp}/*`,
+    ];
 
     const filePaths = await glob(patterns);
 

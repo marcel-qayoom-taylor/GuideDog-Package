@@ -26,7 +26,9 @@ const retry = async (
         );
       }
     } catch (error) {
-      throw new Error(`Serving attempt ${attempt + 1} failed: ${error}. Retrying...`);
+      throw new Error(
+        `Serving attempt ${attempt + 1} failed: ${error}. Retrying...`,
+      );
     }
   }
 
@@ -71,12 +73,15 @@ const stopProcess = (runningProcess: any) => {
   }
 };
 
-export const analyse = async (framework: string | undefined, runPath: string, timestamp: string) => {
+export const analyse = async (
+  framework: string | undefined,
+  runPath: string,
+  timestamp: string,
+) => {
   let serveProcess;
 
   try {
-    if (!framework)
-      throw new Error('guidedog.config.cjs cannot be found');
+    if (!framework) throw new Error('guidedog.config.cjs cannot be found');
 
     switch (framework) {
       case 'React':
@@ -128,7 +133,7 @@ export const analyse = async (framework: string | undefined, runPath: string, ti
     const weightedScore = 500 + parseFloat(rawScore) * 500.0;
     console.log(`minor: ${p0} | moderate: ${p1} | critical: ${p2}`);
     console.log(`Raw score: ${rawScore} | Weighted score: ${weightedScore}`);
-  
+
     const score = {
       rawScore,
       weightedScore,
@@ -142,8 +147,8 @@ export const analyse = async (framework: string | undefined, runPath: string, ti
       testEnvironment: results.testEnvironment,
       timeStamp: results.timestamp,
       url: results.url,
-      violation: results.violations
-    }
+      violation: results.violations,
+    };
 
     await browser.close();
 
@@ -161,4 +166,4 @@ export const analyse = async (framework: string | undefined, runPath: string, ti
       stopProcess(serveProcess);
     }
   }
-}
+};

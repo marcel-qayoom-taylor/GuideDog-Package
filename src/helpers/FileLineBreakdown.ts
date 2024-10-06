@@ -5,7 +5,7 @@ import * as fs from 'fs';
 export function createfileLineBreakdown(
   filePaths: string[],
   runPath: string,
-  timestamp: string
+  timestamp: string,
 ): string {
   const fileLineBreakdown: { [key: string]: string[] } = {}; // Initialize as an object
 

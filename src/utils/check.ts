@@ -23,12 +23,8 @@ export async function check(flag?: string) {
     const results = await analyse(_config?.framework, newRunPath, timestamp);
 
     const filePaths = await runCodeScan();
-    
-    createfileLineBreakdown(
-      filePaths,
-      newRunPath,
-      timestamp
-    );
+
+    createfileLineBreakdown(filePaths, newRunPath, timestamp);
 
     if (flag === 'score') {
       return results.score;
@@ -40,7 +36,7 @@ export async function check(flag?: string) {
 
     const suggestions = await suggestRepoChanges(
       _config.assistantId,
-      _config.contextId
+      _config.contextId,
     );
 
     if (flag === 'report') {
@@ -49,7 +45,7 @@ export async function check(flag?: string) {
         JSON.stringify(suggestions, null, 2),
         {
           encoding: 'utf8',
-          flag:'w'
+          flag: 'w',
         },
       );
     }
@@ -57,5 +53,5 @@ export async function check(flag?: string) {
     return suggestions;
   } catch (error) {
     throw error;
-  } 
+  }
 }
