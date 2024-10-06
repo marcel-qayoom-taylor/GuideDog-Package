@@ -1,6 +1,8 @@
 import { AxePuppeteer } from '@axe-core/puppeteer';
 import puppeteer from 'puppeteer';
 import { exec } from 'child_process';
+import path from 'path';
+import * as fs from 'fs';
 
 const retry = async (
   url: string,
@@ -24,13 +26,11 @@ const retry = async (
         );
       }
     } catch (error) {
-      console.log(
-        `Serving attempt ${attempt + 1} failed: ${error}. Retrying...`,
-      );
+      throw new Error(`Serving attempt ${attempt + 1} failed: ${error}. Retrying...`);
     }
   }
 
-  throw `Server failed to start after ${retries} attempts.`;
+  throw new Error(`Server failed to start after ${retries} attempts.`);
 };
 
 const build = async (cmd: string) =>
@@ -48,8 +48,8 @@ const build = async (cmd: string) =>
   });
 
 const serveBuild = async (cmd: string) =>
-  new Promise<{ serverProcess: any }>((resolve, reject) => {
-    const serverProcess = exec(cmd, (error, stdout, stderr) => {
+  new Promise<{ serveProcess: any }>((resolve, reject) => {
+    const serveProcess = exec(cmd, (error, stdout, stderr) => {
       if (error) {
         return reject(`Serve error: ${error}`);
       }
@@ -60,55 +60,51 @@ const serveBuild = async (cmd: string) =>
     });
 
     const url = 'http://localhost:3000/';
-    retry(url, () => resolve({ serverProcess })).catch(reject);
+    retry(url, () => resolve({ serveProcess })).catch(reject);
   });
 
-const stopServer = (serverProcess: any) => {
+const stopProcess = (runningProcess: any) => {
   try {
-    process.kill(serverProcess.pid + 1, 'SIGTERM');
+    process.kill(runningProcess.pid + 1, 'SIGTERM');
   } catch (error) {
-    throw `Error stopping the server: ${error}`;
+    throw new Error(`Error stopping the server: ${error}`);
   }
 };
 
-export const analyse = async (framework: string | undefined) => {
-  let serverProcess;
+export const analyse = async (framework: string | undefined, runPath: string, timestamp: string) => {
+  let serveProcess;
 
   try {
     if (!framework)
-      throw 'guidedog.config.cjs cannot be found';
+      throw new Error('guidedog.config.cjs cannot be found');
 
     switch (framework) {
       case 'React':
         await build('npm run build');
-        ({ serverProcess } = await serveBuild('npx serve -s build -p 3000'));
+        ({ serveProcess } = await serveBuild('npx serve -s build -p 3000'));
         break;
       case 'Vue':
         await build('npx vite build');
-        ({ serverProcess } = await serveBuild('npx serve -s dist -p 3000'));
+        ({ serveProcess } = await serveBuild('npx serve -s dist -p 3000'));
         break;
       case 'Angular':
         // await build('npx ng build');
-        ({ serverProcess } = await serveBuild('npx ng serve --port 3000'));
+        ({ serveProcess } = await serveBuild('npx ng serve --port 3000'));
         break;
       default:
-        throw 'Unsupported framework';
+        throw new Error('Unsupported framework');
     }
 
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(`http://localhost:3000`);
-  
+
     const results = await new AxePuppeteer(page).analyze();
-  
+
     let p2 = 0; // Critical and Serious issues
     let p1 = 0; // Moderate issues
     let p0 = 0; // Minor issues
-  
-    results.violations.forEach((violation) => {
-      violation.nodes.forEach((node) => console.log(node));
-    });
-  
+
     // Count issues by impact
     results.violations.forEach((violation) => {
       switch (violation.impact) {
@@ -124,10 +120,10 @@ export const analyse = async (framework: string | undefined) => {
           break;
       }
     });
-  
+
     // Calculate the raw score
     const rawScore = ((0.4 * p2 + 0.8 * p1 + p0) / (p1 + p2 + p0)).toFixed(2);
-  
+
     // Optionally weight the score
     const weightedScore = 500 + parseFloat(rawScore) * 500.0;
     console.log(`minor: ${p0} | moderate: ${p1} | critical: ${p2}`);
@@ -140,7 +136,7 @@ export const analyse = async (framework: string | undefined) => {
       moderate: p1,
       minor: p0,
     };
-  
+
     const axeResults = {
       testEngine: results.testEngine,
       testEnvironment: results.testEnvironment,
@@ -148,15 +144,21 @@ export const analyse = async (framework: string | undefined) => {
       url: results.url,
       violation: results.violations
     }
-  
+
     await browser.close();
 
-    if (serverProcess) stopServer(serverProcess);
+    fs.writeFileSync(
+      path.join(runPath, `axecore-${timestamp}.json`),
+      JSON.stringify(axeResults, null, 2),
+      'utf8',
+    );
 
     return { score, axeResults };
   } catch (error) {
-    if (serverProcess) stopServer(serverProcess);
-
     throw error;
+  } finally {
+    if (serveProcess) {
+      stopProcess(serveProcess);
+    }
   }
 }

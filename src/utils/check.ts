@@ -1,38 +1,60 @@
 import * as fs from 'fs';
-import { getConfig, DIR_PATH } from '@/helpers/config';
+import { getConfig, DIR_PATH, createNewRun } from '@/helpers/config';
 import path from 'path';
 import { analyse } from '@/helpers/Axecore';
+import { getUploadingFiles, runCodeScan } from '@/helpers/CodeBaseScan';
+import { createfileLineBreakdown } from '@/helpers/FileLineBreakdown';
+import { suggestRepoChanges, uploadFiles } from '@/helpers/ModelHandler';
+import * as dotenv from 'dotenv';
 
-export async function check(flag: string) {
+dotenv.config();
+
+export async function check(flag?: string) {
   try {
     const _config = await getConfig();
-    // const apiKey = process.env.OPENAI_API_KEY || 'NOT_FOUND';
 
-    // if (apiKey == 'NOT_FOUND') {
-    //   throw 'API Key cannot be found';
-    // }
+    if (!_config) {
+      throw new Error('Something wrong with configuration file');
+    }
 
-    const results = await analyse(_config?.framework);
+    const { timestamp, newRunPath } = createNewRun();
+
+    // analyse to get axe-core score and violations
+    const results = await analyse(_config?.framework, newRunPath, timestamp);
+
+    const filePaths = await runCodeScan();
+    
+    createfileLineBreakdown(
+      filePaths,
+      newRunPath,
+      timestamp
+    );
 
     if (flag === 'score') {
       return results.score;
     }
 
+    const uploadingFiles = await getUploadingFiles(timestamp);
+
+    await uploadFiles(uploadingFiles);
+
+    const suggestions = await suggestRepoChanges(
+      _config.assistantId,
+      _config.contextId
+    );
+
     if (flag === 'report') {
       fs.writeFileSync(
-        path.join(DIR_PATH, 'results.json'),
-        JSON.stringify(results.axeResults, null, 2),
-        'utf8',
-      );
-
-      fs.writeFileSync(
-        path.join(DIR_PATH, 'score.json'),
-        JSON.stringify(results.score, null, 2),
-        'utf-8',
+        `${DIR_PATH}/suggestions.json`,
+        JSON.stringify(suggestions, null, 2),
+        {
+          encoding: 'utf8',
+          flag:'w'
+        },
       );
     }
 
-    return results;
+    return suggestions;
   } catch (error) {
     throw error;
   } 
