@@ -11,7 +11,7 @@ interface Suggestion {
 function applySuggestion(suggestion: Suggestion): void {
     const { Filename, 'suggestion line number': lineNumber, 'suggested code improvement': improvement } = suggestion;
 
-    const filePath = path.resolve(__dirname, Filename);
+    const filePath = path.resolve(suggestion.Filename);
     if (!fs.existsSync(filePath)) {
         console.error(`File not found: ${Filename}`);
         return;
@@ -42,6 +42,7 @@ export async function applyAllSuggestions(suggestionJson: string){
 }
 
 export async function applySingleSuggestion(index: number, suggestionJson: string){
+    console.log("applyallsuggestions")
     const suggestions: Suggestion[] = JSON.parse(suggestionJson);
 
     if (index >= 0 && index < suggestions.length) {

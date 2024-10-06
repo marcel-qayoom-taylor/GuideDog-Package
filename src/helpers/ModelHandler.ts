@@ -87,7 +87,7 @@ export async function SuggestRepoChanges(
   const suggestions = jsonResponse.text.value;
 
   console.log(suggestions);
-  return jsonResponse;
+  return suggestions;
 }
 
 async function CreateVectorStore(

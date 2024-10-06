@@ -83,8 +83,10 @@ program
 program
   .command('guide')
   .description('Fix accessibility issues in a specific file')
-  .action(() => {
-    fixRepo();
+  .action(async () => {
+    const suggestions = await fixRepo();
+    console.log(suggestions);
+    applyAllSuggestions(suggestions);
   });
 
 program.parse(process.argv);
