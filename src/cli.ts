@@ -79,12 +79,15 @@ program
         await check('report');
       } else if (options.score) {
         await check('score');
+      }else {
+        await check();
       }
 
       console.log('✅ Check completed!');
+      console.log('Ctrl + C to exit.');
     } catch (error) {
       program.error(`❌Error during checking:\n${error}`);
-      process.exit(0);
+      console.log('Ctrl + C to exit.');
     }
   });
 
