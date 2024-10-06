@@ -5,14 +5,13 @@ let openaiClient: OpenAI | null = null;
 export function createOpenAIClient(): OpenAI {
   try {
     if (!openaiClient) {
-      const apiKey = process.env.OPENAI_API_KEY || 'NOT_FOUND';
+      const apiKey = process.env.OPENAI_API_KEY || undefined;
 
-      if (apiKey == 'NOT_FOUND') {
+      if (!apiKey) {
         throw new Error('API Key cannot be found');
       }
 
       openaiClient = new OpenAI({ apiKey });
-      console.log('OpenAI client initialized.');
     } else {
       console.log('OpenAI client already initialized.');
     }
