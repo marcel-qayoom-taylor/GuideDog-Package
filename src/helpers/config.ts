@@ -2,6 +2,7 @@ import { OpenAI } from 'openai';
 import * as fs from 'fs';
 import path from 'path';
 import _ from 'lodash';
+import wcag from '@/data/wcag.json';
 
 interface IConfig {
   framework?: string;
@@ -36,6 +37,12 @@ export async function initConfig(_config: IConfig) {
         { encoding: 'utf-8' },
       );
     }
+
+    fs.writeFileSync(
+      path.join(DIR_PATH, 'wcag.json'),
+      JSON.stringify(wcag),
+      { encoding: 'utf-8' }
+    )
   } catch (error) {
     throw error;
   }
