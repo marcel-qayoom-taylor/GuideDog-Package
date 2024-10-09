@@ -9,7 +9,11 @@ import path from 'path';
 import { analyse } from '@/helpers/Axecore';
 import { getUploadingFiles, runCodeScan } from '@/helpers/CodeBaseScan';
 import { createfileLineBreakdown } from '@/helpers/FileLineBreakdown';
-import { suggestRepoChanges, uploadFiles } from '@/helpers/ModelHandler';
+import {
+  suggestRepoChanges,
+  getRepoSuggestions,
+  uploadFiles,
+} from '@/helpers/ModelHandler';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -23,26 +27,21 @@ export async function check(flag?: string) {
     }
 
     const { timestamp, newRunPath } = createNewRun();
+    const suggestions = await getRepoSuggestions();
 
+    // UNCOMMENT BACK LATER 
     // analyse to get axe-core score and violations
-    const results = await analyse(_config?.framework, newRunPath, timestamp);
+    // const results = await analyse(_config?.framework, newRunPath, timestamp);
 
+    
     const filePaths = await runCodeScan();
 
     createfileLineBreakdown(filePaths, newRunPath, timestamp);
 
-    if (flag === 'score') {
-      return results.score;
-    }
-
-    const uploadingFiles = await getUploadingFiles(timestamp);
-
-    await uploadFiles(uploadingFiles);
-
-    const suggestions = await suggestRepoChanges(
-      _config.assistantId,
-      _config.contextId,
-    );
+    // UNCOMMENT BACK LATER 
+    // if (flag === 'score') {
+    //   return results.score;
+    // }
 
     if (flag === 'report') {
       // Write suggestions to guidedog folder

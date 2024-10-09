@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import { getOpenAIClient } from './OpenaiClient';
 import { getConfig } from './config';
 import { z } from 'zod';
+import { zodResponseFormat } from 'openai/helpers/zod.mjs';
 
 const ResponseFormat = z.object({
   fileName: z.string(),
@@ -15,6 +16,29 @@ const ResponseFormat = z.object({
     }),
   ),
 });
+
+export async function getRepoSuggestions() { 
+  try {
+    console.log("Getting Suggestions")
+    const apiKey = process.env.OPENAI_API_KEY || undefined;
+    const openai = new OpenAI({ apiKey: apiKey });
+
+    const completion = await openai.beta.chat.completions.parse({
+      model: "gpt-4o-2024-08-06",
+      messages: [
+        { role: "system", content: "You are an expert frontend developer in ReactJS, VueJS, Angular and Web accessibility and tasked with helping me improve the accessibility of my frontend code according to WCAG 2.2 guidelines." },
+        { role: "user", content: "say hello world to me" },
+      ],
+      response_format: zodResponseFormat(ResponseFormat, "response_format"),
+    });
+
+    const suggestions = completion?.choices[0]?.message.parsed;
+    console.log("SUGGESTIONS: ", suggestions);
+    return suggestions;
+  } catch (error) {
+    throw error;
+  }
+}
 
 export async function CreateAssistant() {
   console.log('Creating assistant "GuideDog"...');
