@@ -24,9 +24,8 @@ export async function check(flag?: string) {
 
     const { timestamp, newRunPath } = createNewRun();
 
-    // UNCOMMENT BACK LATER
     // analyse to get axe-core score and violations
-    // const results = await analyse(_config?.framework, newRunPath, timestamp);
+    const results = await analyse(_config?.framework, newRunPath, timestamp);
 
     const filePaths = await runCodeScan();
 
@@ -38,10 +37,9 @@ export async function check(flag?: string) {
 
     const suggestions = await getRepoSuggestions(fileLineBreakdownPath);
 
-    // UNCOMMENT BACK LATER
-    // if (flag === 'score') {
-    //   return results.score;
-    // }
+    if (flag === 'score') {
+      return results.score;
+    }
 
     if (flag === 'report') {
       // Write suggestions to guidedog folder
