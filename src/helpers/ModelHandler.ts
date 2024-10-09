@@ -2,6 +2,19 @@ import OpenAI from 'openai';
 import * as fs from 'fs';
 import { getOpenAIClient } from './OpenaiClient';
 import { getConfig } from './config';
+import { z } from 'zod';
+
+const ResponseFormat = z.object({
+  fileName: z.string(),
+  issue: z.array(
+    z.object({
+      location: z.number(),
+      impact: z.enum(['critical', 'serious', 'moderate', 'minor']),
+      type: z.string(),
+      improvement: z.string(),
+    }),
+  ),
+});
 
 export async function CreateAssistant() {
   console.log('Creating assistant "GuideDog"...');
