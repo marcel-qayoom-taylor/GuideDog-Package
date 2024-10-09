@@ -4,6 +4,7 @@ import { getOpenAIClient } from './OpenaiClient';
 import { getConfig } from './config';
 import { z } from 'zod';
 import { zodResponseFormat } from 'openai/helpers/zod.mjs';
+import { LATEST_RUN_PATH } from './config';
 
 const ResponseFormat = z.object({
   fileName: z.string(),
@@ -17,17 +18,36 @@ const ResponseFormat = z.object({
   ),
 });
 
-export async function getRepoSuggestions() { 
+export async function getRepoSuggestions(fileLineBreakdownPath: string) { 
   try {
     console.log("Getting Suggestions")
     const apiKey = process.env.OPENAI_API_KEY || undefined;
     const openai = new OpenAI({ apiKey: apiKey });
 
+    const files_data = fs.readFileSync(fileLineBreakdownPath, 'utf8');
+
+    const prompt = `I am providing you a json file which is a line by line breakdown of every front end related file in my codebase. This file is in the format of:
+          {
+            "fileName": [
+              "line 1",
+              "line 2",
+              "line 3",
+              ...
+            ]
+          } for each file in my codebase. each line represents the exact line of code except for the first characters which indicate the line number, colon and one space e.g. "3: " is line 3 in the file.
+
+          From this input data, please use identify any accessibility issues in the codebase according to WCAG 2.2 guidelines. Provide suggestions for code improvements based on the issues identified. Ensure that the suggestions are accurate and adhere to accessibility best practices. 
+          
+          Here is the json file of the line by line breakdown of my codebase:
+
+          ${files_data}
+        `
+
     const completion = await openai.beta.chat.completions.parse({
       model: "gpt-4o-2024-08-06",
       messages: [
         { role: "system", content: "You are an expert frontend developer in ReactJS, VueJS, Angular and Web accessibility and tasked with helping me improve the accessibility of my frontend code according to WCAG 2.2 guidelines." },
-        { role: "user", content: "say hello world to me" },
+        { role: "user", content: prompt},
       ],
       response_format: zodResponseFormat(ResponseFormat, "response_format"),
     });

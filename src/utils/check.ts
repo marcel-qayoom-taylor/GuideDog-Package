@@ -27,16 +27,17 @@ export async function check(flag?: string) {
     }
 
     const { timestamp, newRunPath } = createNewRun();
-    const suggestions = await getRepoSuggestions();
 
     // UNCOMMENT BACK LATER 
     // analyse to get axe-core score and violations
     // const results = await analyse(_config?.framework, newRunPath, timestamp);
 
-    
     const filePaths = await runCodeScan();
 
-    createfileLineBreakdown(filePaths, newRunPath, timestamp);
+    const fileLineBreakdownPath = createfileLineBreakdown(filePaths, newRunPath, timestamp);
+
+    const suggestions = await getRepoSuggestions(fileLineBreakdownPath);
+
 
     // UNCOMMENT BACK LATER 
     // if (flag === 'score') {
