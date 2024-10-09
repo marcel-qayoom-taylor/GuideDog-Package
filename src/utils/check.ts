@@ -9,11 +9,7 @@ import path from 'path';
 import { analyse } from '@/helpers/Axecore';
 import { getUploadingFiles, runCodeScan } from '@/helpers/CodeBaseScan';
 import { createfileLineBreakdown } from '@/helpers/FileLineBreakdown';
-import {
-  suggestRepoChanges,
-  getRepoSuggestions,
-  uploadFiles,
-} from '@/helpers/ModelHandler';
+import { getRepoSuggestions } from '@/helpers/ModelHandler';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -28,18 +24,21 @@ export async function check(flag?: string) {
 
     const { timestamp, newRunPath } = createNewRun();
 
-    // UNCOMMENT BACK LATER 
+    // UNCOMMENT BACK LATER
     // analyse to get axe-core score and violations
     // const results = await analyse(_config?.framework, newRunPath, timestamp);
 
     const filePaths = await runCodeScan();
 
-    const fileLineBreakdownPath = createfileLineBreakdown(filePaths, newRunPath, timestamp);
+    const fileLineBreakdownPath = createfileLineBreakdown(
+      filePaths,
+      newRunPath,
+      timestamp,
+    );
 
     const suggestions = await getRepoSuggestions(fileLineBreakdownPath);
 
-
-    // UNCOMMENT BACK LATER 
+    // UNCOMMENT BACK LATER
     // if (flag === 'score') {
     //   return results.score;
     // }
