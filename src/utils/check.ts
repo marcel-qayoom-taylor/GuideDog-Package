@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { getConfig, DIR_PATH, createNewRun } from '@/helpers/config';
+import { getConfig, DIR_PATH, LATEST_RUN_PATH, createNewRun } from '@/helpers/config';
 import path from 'path';
 import { analyse } from '@/helpers/Axecore';
 import { getUploadingFiles, runCodeScan } from '@/helpers/CodeBaseScan';
@@ -40,8 +40,19 @@ export async function check(flag?: string) {
     );
 
     if (flag === 'report') {
+      // Write suggestions to guidedog folder
       fs.writeFileSync(
         `${DIR_PATH}/suggestions.json`,
+        JSON.stringify(suggestions, null, 2),
+        {
+          encoding: 'utf8',
+          flag: 'w',
+        },
+      );
+
+      // Write suggestions to latest run for historical purposes
+      fs.writeFileSync(
+        `${LATEST_RUN_PATH}/suggestions.json`,
         JSON.stringify(suggestions, null, 2),
         {
           encoding: 'utf8',

@@ -14,6 +14,7 @@ interface IConfig {
 export const DIR_PATH = path.join(process.cwd(), '.guidedog');
 export const CONFIG_PATH = path.join(DIR_PATH, 'guidedog.config.cjs');
 export const RUNS_PATH = path.join(DIR_PATH, 'runs');
+export let LATEST_RUN_PATH = '';
 
 export async function initConfig(_config: IConfig) {
   try {
@@ -104,6 +105,8 @@ export function createNewRun() {
       );
     }
 
+    LATEST_RUN_PATH = newRunPath;
+
     return { timestamp, newRunPath };
   } catch (error) {
     throw error;
@@ -134,3 +137,4 @@ export async function saveAPIKey(apiKey: string) {
     console.log('.env file created and API key added.');
   }
 }
+
