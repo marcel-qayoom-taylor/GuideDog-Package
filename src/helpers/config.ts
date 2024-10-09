@@ -89,7 +89,7 @@ export async function updateConfig(
 
 export function createNewRun() {
   // .toJSON is an easy way to give us YYYY-MM-DD-${time} format to avoid using '/'s as that causes issues for path names
-  const timestamp = new Date().toJSON();
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
 
   const newRunPath = path.join(
     process.cwd(),
