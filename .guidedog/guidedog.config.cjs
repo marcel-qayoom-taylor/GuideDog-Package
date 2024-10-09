@@ -1,5 +1,5 @@
 module.exports = {
-  framework: 'Other',
-  assistantId: 'asst_NCEqB4gNq60SomDL7gR1Jn6t',
-  contextId: 'vs_wkatNV4L1RD32Gx1oAk7WzWy',
+  framework: 'React',
+  assistantId: 'asst_ilQ3giRqGdA09eg4EXF8GQ8W',
+  contextId: 'vs_goyLo3gq61WEA5QU7TXiXzLo',
 };

@@ -14,6 +14,7 @@ interface IConfig {
 export const DIR_PATH = path.join(process.cwd(), '.guidedog');
 export const CONFIG_PATH = path.join(DIR_PATH, 'guidedog.config.cjs');
 export const RUNS_PATH = path.join(DIR_PATH, 'runs');
+export let LATEST_RUN_PATH = '';
 
 export async function initConfig(_config: IConfig) {
   try {
@@ -103,6 +104,8 @@ export function createNewRun() {
         'Run path already exists for this exact time. Returning existing run path.',
       );
     }
+
+    LATEST_RUN_PATH = newRunPath;
 
     return { timestamp, newRunPath };
   } catch (error) {
