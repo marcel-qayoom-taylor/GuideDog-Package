@@ -4,7 +4,6 @@ import { z } from 'zod';
 import { zodResponseFormat } from 'openai/helpers/zod.mjs';
 import { DIR_PATH } from './config';
 
-
 const ResponseFormat = z.object({
   suggestions: z.array(
     z.object({
@@ -17,18 +16,16 @@ const ResponseFormat = z.object({
           improvement: z.string(),
         }),
       ),
-    })
+    }),
   ),
 });
 
-
-export async function getRepoSuggestions(fileLineBreakdownPath: string) { 
+export async function getRepoSuggestions(fileLineBreakdownPath: string) {
   try {
     const openai = getOpenAIClient();
 
     const files_data = fs.readFileSync(fileLineBreakdownPath, 'utf8');
-    const wcag_data = fs.readFileSync(`${DIR_PATH}/wcag.json`, 'utf8')
-
+    const wcag_data = fs.readFileSync(`${DIR_PATH}/wcag.json`, 'utf8');
 
     const prompt = `I am providing you two json files. The first is a line by line breakdown of every front end related file in my codebase. This file is in the format of:
           {
@@ -88,19 +85,23 @@ export async function getRepoSuggestions(fileLineBreakdownPath: string) {
           HERE IS THE JSON FILE OF THE LINE BY LINE BREAKDOWN OF MY CODEBASE:
 
           ${files_data}
-        `
+        `;
 
     const completion = await openai.beta.chat.completions.parse({
-      model: "gpt-4o-2024-08-06",
+      model: 'gpt-4o-2024-08-06',
       messages: [
-        { role: "system", content: "You are an expert frontend developer in ReactJS, VueJS, Angular and Web accessibility and tasked with helping me improve the accessibility of my frontend code according to WCAG 2.2 guidelines." },
-        { role: "user", content: prompt},
+        {
+          role: 'system',
+          content:
+            'You are an expert frontend developer in ReactJS, VueJS, Angular and Web accessibility and tasked with helping me improve the accessibility of my frontend code according to WCAG 2.2 guidelines.',
+        },
+        { role: 'user', content: prompt },
       ],
-      response_format: zodResponseFormat(ResponseFormat, "response_format"),
+      response_format: zodResponseFormat(ResponseFormat, 'response_format'),
     });
 
     const suggestions = completion?.choices[0]?.message.parsed;
-    
+
     return suggestions;
   } catch (error) {
     throw error;

@@ -19,7 +19,7 @@ async function fixRepo() {
       const assistantId = configObj.default.assistantId;
       const contextId = configObj.default.contextId;
 
-      console.log("to do: fix whole repo")
+      console.log('to do: fix whole repo');
       return [];
     } else {
       throw new Error('No API Key found');
