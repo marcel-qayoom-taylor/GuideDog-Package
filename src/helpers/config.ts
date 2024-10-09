@@ -137,4 +137,3 @@ export async function saveAPIKey(apiKey: string) {
     console.log('.env file created and API key added.');
   }
 }
-

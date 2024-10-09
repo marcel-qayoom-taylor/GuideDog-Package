@@ -1,5 +1,10 @@
 import * as fs from 'fs';
-import { getConfig, DIR_PATH, LATEST_RUN_PATH, createNewRun } from '@/helpers/config';
+import {
+  getConfig,
+  DIR_PATH,
+  LATEST_RUN_PATH,
+  createNewRun,
+} from '@/helpers/config';
 import path from 'path';
 import { analyse } from '@/helpers/Axecore';
 import { getUploadingFiles, runCodeScan } from '@/helpers/CodeBaseScan';
