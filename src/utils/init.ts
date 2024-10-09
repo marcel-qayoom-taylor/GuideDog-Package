@@ -1,22 +1,15 @@
-import { runCodeScan } from '@/helpers/CodeBaseScan';
 import { CreateAssistant } from '@/helpers/ModelHandler';
-import { initConfig, saveAPIKey, createNewRun } from '@/helpers/config';
-import { createfileLineBreakdown } from '@/helpers/FileLineBreakdown';
+import { initConfig, saveAPIKey } from '@/helpers/config';
+import { createOpenAIClient } from '@/helpers/OpenaiClient';
 
 // Start Generation Here
 async function init(apiKey: string, framework: string) {
   try {
     saveAPIKey(apiKey);
-    const contextFiles = await runCodeScan();
 
-    const runPath = await createNewRun();
+    createOpenAIClient();
 
-    const fileLineBreakdown = await createfileLineBreakdown(
-      contextFiles,
-      runPath,
-    );
-
-    const response = await CreateAssistant(apiKey, fileLineBreakdown);
+    const response = await CreateAssistant();
 
     const _config = {
       framework: framework,

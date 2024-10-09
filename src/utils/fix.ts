@@ -1,5 +1,4 @@
-import { SuggestRepoChanges } from '@/helpers/ModelHandler';
-import * as fs from 'fs/promises';
+import { suggestRepoChanges } from '@/helpers/ModelHandler';
 import * as dotenv from 'dotenv';
 import path from 'path';
 
@@ -20,11 +19,7 @@ async function fixRepo() {
       const assistantId = configObj.default.assistantId;
       const contextId = configObj.default.contextId;
 
-      const suggestionList = await SuggestRepoChanges(
-        apiKey,
-        assistantId,
-        contextId,
-      );
+      const suggestionList = await suggestRepoChanges(assistantId, contextId);
 
       return suggestionList;
     } else {

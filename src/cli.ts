@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import inquirer from 'inquirer';
-import { init, check, fixFile, fixRepo } from './index';
 import * as dotenv from 'dotenv';
+import * as fs from 'fs';
+import path from 'path';
+import { init, check, fixFile, fixRepo } from './index';
+import { DIR_PATH } from './helpers/config';
 
 const program = new Command();
 dotenv.config();
@@ -66,25 +69,69 @@ program
 program
   .command('check')
   .description('Check accessibility of your project')
-  .option('--report', 'Generate a detailed accessibility report')
+  .option('-r, --report', 'Generate a detailed accessibility report')
+  .option('-s, --score', 'Assess accessibility score')
   .action(async (options) => {
     try {
       console.log('Starting check...');
 
-      await check(options.report);
+      if (options.report) {
+        await check('report');
+      } else if (options.score) {
+        await check('score');
+      } else {
+        await check();
+      }
 
       console.log('✅ Check completed!');
+      console.log('Ctrl + C to exit.');
     } catch (error) {
       program.error(`❌Error during checking:\n${error}`);
+      console.log('Ctrl + C to exit.');
     }
   });
 
 // TODO: Add option for fixFile
 program
-  .command('guide')
-  .description('Fix accessibility issues in a specific file')
-  .action(() => {
-    fixRepo();
+  .command('fix')
+  .description('Fix accessibility issues')
+  .action(async () => {
+    console.log('Starting fix...');
+
+    try {
+      const scopeRes = await inquirer.prompt({
+        type: 'list',
+        name: 'scope',
+        message: 'Do you want to fix the whole repository or a specific file?',
+        choices: ['Whole repo', 'Specific file'],
+      });
+
+      if (scopeRes.scope == 'Specific file') {
+        const fileRes = await inquirer.prompt({
+          type: 'input',
+          name: 'filePath',
+          message: 'Enter your OpenAI API key:',
+          validate: async (input) => {
+            const file = path.join(DIR_PATH, input);
+
+            if (fs.existsSync(file)) {
+              return input.length > 0 || 'File path cannot be empty';
+            }
+
+            return 'File does not exist';
+          },
+        });
+
+        const file = path.join(DIR_PATH, fileRes.filePath);
+        fixFile(file);
+      } else {
+        fixRepo();
+      }
+
+      console.log('✅ Fix completed!');
+    } catch (error) {
+      program.error(`❌ Error during fixing:\n${error}`);
+    }
   });
 
 program.parse(process.argv);

@@ -2,6 +2,7 @@ import { OpenAI } from 'openai';
 import * as fs from 'fs';
 import path from 'path';
 import _ from 'lodash';
+import wcag from '@/data/wcag.json';
 
 interface IConfig {
   framework?: string;
@@ -12,6 +13,7 @@ interface IConfig {
 
 export const DIR_PATH = path.join(process.cwd(), '.guidedog');
 export const CONFIG_PATH = path.join(DIR_PATH, 'guidedog.config.cjs');
+export const RUNS_PATH = path.join(DIR_PATH, 'runs');
 
 export async function initConfig(_config: IConfig) {
   try {
@@ -35,18 +37,26 @@ export async function initConfig(_config: IConfig) {
         { encoding: 'utf-8' },
       );
     }
+
+    fs.writeFileSync(path.join(DIR_PATH, 'wcag.json'), JSON.stringify(wcag), {
+      encoding: 'utf-8',
+    });
   } catch (error) {
     throw error;
   }
 }
 
-export const getConfig = async (): Promise<IConfig | undefined> => {
+export const getConfig = async (): Promise<IConfig> => {
   try {
-    const _config = await import(CONFIG_PATH);
+    const _config: IConfig = (await import(CONFIG_PATH)).default;
 
-    return _config.default;
+    if (!_config) {
+      throw new Error('Configuration file can not be found');
+    }
+
+    return _config;
   } catch (error) {
-    throw 'Error: Configuration file can not be found';
+    throw error;
   }
 };
 
@@ -76,13 +86,13 @@ export async function updateConfig(
   }
 }
 
-export async function createNewRun() {
+export function createNewRun() {
   // .toJSON is an easy way to give us YYYY-MM-DD-${time} format to avoid using '/'s as that causes issues for path names
-  const todaysDate = new Date().toJSON();
+  const timestamp = new Date().toJSON();
 
   const newRunPath = path.join(
     process.cwd(),
-    `.guidedog/runs/run-${todaysDate}`,
+    `.guidedog/runs/run-${timestamp}`,
   );
 
   try {
@@ -94,7 +104,7 @@ export async function createNewRun() {
       );
     }
 
-    return newRunPath;
+    return { timestamp, newRunPath };
   } catch (error) {
     throw error;
   }
