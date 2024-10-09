@@ -50,40 +50,12 @@ export async function suggestRepoChanges(
     const prompt: string = `
       Please use the vector store of repo files, which contains "files-*.json", "axecore-*.json", and "wcag.json", to analyze accessibility issues according to WCAG 2.2 guidelines. Based on the issues identified, provide suggestions for code improvements.
       The "files-*.json" file:
-        - Description: a structured JSON object that maps filenames to their corresponding lines of code.
+        - Description: a structured JSON object that maps filenames in the codebase to their corresponding lines of code.
         - Structure:
           {
-            [fileName: string]: string[]; // Maps each file name to an array of lines as strings
+            fileName: string[], // Maps each file name in the scanned file to an array of lines as strings
           }
-        - Sample of "files-*.json" file:
-          {
-            "src/index.html": [
-              "1: <!doctype html>",
-              "2: <html>",
-              "3:   <head>",
-              "4:     <title>My HTML Page</title>",
-              "5:   </head>",
-              "6:   <body>",
-              "7:     <div>",
-              "8:       <p>Welcome to my website!</p>",
-              "9:       <p>This is the first div.</p>",
-              "10:     </div>",
-              "11: ",
-              "12:     <div>",
-              "13:       <p>About Me</p>",
-              "14:       <p>I am a web developer.</p>",
-              "15:     </div>",
-              "16: ",
-              "17:     <div>",
-              "18:       <p>Contact Information</p>",
-              "19:       <p>Email: example@example.com</p>",
-              "20:       <p>Phone: 123-456-7890</p>",
-              "21:     </div>",
-              "22:   </body>",
-              "23: </html>",
-              "24: "
-            ]
-          }
+
       The axecore-*.json file
         - Description: a structured JSON object that contains the results of accessibility tests conducted by the axe-core library.
         - Structure:
@@ -144,7 +116,7 @@ export async function suggestRepoChanges(
           }
 
       Your task is to:
-      1. Retrieve the latest files that matches the pattern "files-*.json" and "axecore-*.json" based on their timestamps and "axe-core.json".
+      1. Retrieve the latest files that matches the pattern "files-*.json" and "axecore-*.json" based on their timestamps and "wcag.json".
       2. Analyze accessibility issues in the latest "files-*.json" according to WCAG 2.2 guidelines.
         - The analysis must include both your own findings and the violations from the latest "axecore-*.json"
         - Contextualize your analysis by reviewing the entire file, considering how different elements interact and how they might affect accessibility.
@@ -156,15 +128,15 @@ export async function suggestRepoChanges(
         - If the issue can be resolved with a single line of code, provide the original line, not placeholder text (e.g., "...").
         - For multiline fixes, fix the issue, the unchanged content inside can be replace with '...' to indicate that the code is incomplete.
         - Ensure that the suggested improvements are functional and adhere to accessibility best practices and correctness.
-        - If no definitive improvement can be made, provide alternative suggestions or explanations.
+        - If no definitive improvement can be made, provide a message with relevant keywords for users to search and resolve the issue manually.
       4. Before returning the suggestions, validate the suggestions and modify them accordingly if not pass any of these validation criteria:
         - Validate that the suggestions consider the surrounding code context. This includes ensuring that conditional rendering, variable states, and the overall structure of the component or file are taken into account.
         - Suggestions should not introduce new bugs or alter the intended behavior of the application.
         - Ensure that the improvements adhere to established accessibility guidelines WCAG 2.2
         - Validate that the suggested changes do not negatively affect the visual presentation or user experience.
-      5. Return a valid JSON, with no extra text, code block delimiters, or newlines. The JSON should be an array of objects, where each object represents a file with accessibility issues.
+      5. Strictly return a valid JSON, with no extra explanation, text, code block delimiters, or newlines. The JSON should be an array of objects, where each object represents a file with accessibility issues.
 
-      Ensure the output is a valid JSON array of objects with the following structure:
+      The output must be strictly following this structure:
       [
         {
           fileName:string, //  The name of file having issues
@@ -174,40 +146,6 @@ export async function suggestRepoChanges(
               impact: string, // The severity of the issue based on axe-core's analysis.
               type: string, // The type of accessibility issue, based on predefined WCAG guidelines.
               improvement: string // The suggested code improvement to fix the issue.
-            }
-          ]
-        }
-      ]
-
-      If some issues can't be automatically resolved, provide a message with relevant keywords for users to search and resolve the issue manually.
-
-      Example of output:
-      [
-        {
-          "fileName": "index.html",
-          "issues": [
-            {
-              "location": 5,
-              "impact": "critical",
-              "type": "Lack of semantic structure", 
-              "improvement": "<header><h1>Welcome to my website!</h1></header>"
-            },
-            {
-              "location": 10,
-              "impact": "critical",
-              "type": "Missing aria-label",
-              "improvement": "<button aria-label='submit'>Submit</button>"
-            }
-          ]
-        },
-        {
-          "fileName": "app.js",
-          "issues": [
-            {
-              "location": 20],
-              "impact": "moderate",
-              "type": "Insufficient color contrast", 
-              "improvement": "Ensure contrast ratio of 4.5:1 between text and background"
             }
           ]
         }
