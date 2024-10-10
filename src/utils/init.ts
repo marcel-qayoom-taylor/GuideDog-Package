@@ -1,4 +1,3 @@
-import { CreateAssistant } from '@/helpers/ModelHandler';
 import { initConfig, saveAPIKey } from '@/helpers/config';
 import { createOpenAIClient } from '@/helpers/OpenaiClient';
 
@@ -9,12 +8,8 @@ async function init(apiKey: string, framework: string) {
 
     createOpenAIClient();
 
-    const response = await CreateAssistant();
-
     const _config = {
       framework: framework,
-      assistantId: response.assistant.id,
-      contextId: response.contextVectorID,
     };
 
     await initConfig(_config);

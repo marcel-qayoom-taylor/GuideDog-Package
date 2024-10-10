@@ -1,0 +1,58 @@
+[
+  {
+    "fileName": "TestFiles/missingformlabels.html",
+    "issues": [
+      {
+        "lineNumber": 11,
+        "impact": "serious",
+        "type": "Labels or Instructions",
+        "improvement": "<input type='text' id='name' placeholder='Enter your name' />"
+      },
+      {
+        "lineNumber": 12,
+        "impact": "serious",
+        "type": "Labels or Instructions",
+        "improvement": "<input type='email' id='email' placeholder='Enter your email' />"
+      }
+    ]
+  },
+  {
+    "fileName": "TestFiles/missingbutton.html",
+    "issues": [
+      {
+        "lineNumber": 10,
+        "impact": "serious",
+        "type": "Labels or Instructions",
+        "improvement": "<button aria-label='Click me'>Click me</button>"
+      }
+    ]
+  },
+  {
+    "fileName": "TestFiles/ariaissue.html",
+    "issues": [
+      {
+        "lineNumber": 10,
+        "impact": "serious",
+        "type": "ARIA Roles and Properties",
+        "improvement": "<button role='button'>Link as Button</button>"
+      },
+      {
+        "lineNumber": 15,
+        "impact": "serious",
+        "type": "Labels or Instructions",
+        "improvement": "<button aria-label='No label'>No label here</button>"
+      }
+    ]
+  },
+  {
+    "fileName": "src/index.html",
+    "issues": [
+      {
+        "lineNumber": 8,
+        "impact": "serious",
+        "type": "Text Alternatives",
+        "improvement": "<img src='image.jpg' alt='Descriptive text for image' />"
+      }
+    ]
+  }
+]

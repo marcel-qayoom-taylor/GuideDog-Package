@@ -1,212 +1,130 @@
-import OpenAI from 'openai';
 import * as fs from 'fs';
 import { getOpenAIClient } from './OpenaiClient';
-import { getConfig } from './config';
+import { z } from 'zod';
+import { zodResponseFormat } from 'openai/helpers/zod.mjs';
+import { DIR_PATH } from './config';
 
-export async function CreateAssistant() {
-  console.log('Creating assistant "GuideDog"...');
+const ResponseFormat = z.object({
+  suggestions: z.array(
+    z.object({
+      fileName: z.string(),
+      issues: z.array(
+        z.object({
+          lineNumber: z.number(),
+          impact: z.enum(['critical', 'serious', 'moderate', 'minor']),
+          type: z.string(),
+          improvement: z.string(),
+        }),
+      ),
+    }),
+  ),
+});
+
+export async function getRepoSuggestions(fileLineBreakdownPath: string) {
   try {
-    const client = getOpenAIClient();
+    const openai = getOpenAIClient();
 
-    const vectorStore = await client.beta.vectorStores.create({
-      name: 'Codebase Context',
-    });
+    const files_data = fs.readFileSync(fileLineBreakdownPath, 'utf8');
+    const wcag_data = fs.readFileSync(`${DIR_PATH}/wcag.json`, 'utf8');
 
-    const assistant = await client.beta.assistants.create({
-      name: 'GuideDog',
-      instructions: `
-        You are an expert frontend developer in ReactJS, VueJS, Angular and Web accessibility and tasked with helping me improve the accessibility of my frontend code according to WCAG 2.2 guidelines.
-      `,
-      tools: [{ type: 'file_search' }],
-      tool_resources: {
-        file_search: {
-          vector_store_ids: [vectorStore.id],
-        },
-      },
-      model: 'gpt-4o-mini',
-    });
-
-    console.log('Created assistant "GuideDog"');
-    return { assistant, contextVectorID: vectorStore.id };
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function suggestRepoChanges(
-  assistantId: string | undefined,
-  contextId: string | undefined,
-) {
-  try {
-    if (!assistantId || !contextId) {
-      throw new Error(
-        'assistantId or contextId cannot be found in configuration file',
-      );
-    }
-
-    const client = getOpenAIClient();
-
-    // Prompt should be a string
-    const prompt: string = `
-      Please use the vector store of repo files, which contains "files-*.json", "axecore-*.json", and "wcag.json", to analyze accessibility issues according to WCAG 2.2 guidelines. Based on the issues identified, provide suggestions for code improvements.
-      The "files-*.json" file:
-        - Description: a structured JSON object that maps filenames in the codebase to their corresponding lines of code.
-        - Structure:
+    const prompt = `I am providing you two json files. The first is a line by line breakdown of every front end related file in my codebase. This file is in the format of:
           {
-            fileName: string[], // Maps each file name in the scanned file to an array of lines as strings
-          }
-
-      The axecore-*.json file
-        - Description: a structured JSON object that contains the results of accessibility tests conducted by the axe-core library.
-        - Structure:
-          {
-            testEngine: {
-              name: string;  // The name of the test engine (e.g., "axe-core")
-              version: string;  // The version of the test engine
-            };
-            testEnvironment: {
-              userAgent: string;  // The user agent string of the browser
-              windowWidth: number;  // The width of the browser window in pixels
-              windowHeight: number;  // The height of the browser window in pixels
-              orientationAngle: number;  // The orientation angle of the device
-              orientationType: string;  // The type of orientation (e.g., portrait-primary)
-            };
-            timestamp: string;  // The timestamp of when the test was conducted
-            url: string;  // The URL that was tested
-            violations: {
-              id: string;  // The unique identifier for the violation
-              impact: string;  // The severity of the violation (e.g., serious, moderate, minor)
-              description: string;  // A description of the violation
-              nodes: {
-                html: string;  // The HTML element that has the violation
-                target: string[];  // The target selector(s) for the violating element(s)
-                failureSummary: string;  // A summary of the failure
-              }[];  // Array of nodes that are affected by the violation
-            }[];  // An array of violations found during the test
-          }
-        - Sample of "axecore-*.json" file:
-          {
-            "testEngine": {
-              "name": "axe-core",
-              "version": "4.10.0"
-            },
-            "testEnvironment": {
-              "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/128.0.0.0 Safari/537.36",
-              "windowWidth": 800,
-              "windowHeight": 600,
-              "orientationAngle": 0,
-              "orientationType": "portrait-primary"
-            },
-            "timestamp": "2024-10-02T16:00:01.190Z",
-            "url": "http://localhost:3000/",
-            "violations": [
-              {
-                "id": "color-contrast",
-                "impact": "serious",
-                "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
-                "nodes": [
-                  {
-                    "html": "<span>Some element</span>",
-                    "target": ["fileName > span"],
-                    "failureSummary": "Element has insufficient color contrast"
-                  }
-                ]
-              }
+            "fileName": [
+              "line 1",
+              "line 2",
+              "line 3",
+              ...
             ]
-          }
+          } for each file in my codebase. each line represents the exact line of code except for the first characters which indicate the line number, colon and one space e.g. "3: " is line 3 in the file.
 
-      Your task is to:
-      1. Retrieve the latest files that matches the pattern "files-*.json" and "axecore-*.json" based on their timestamps and "wcag.json".
-      2. Analyze accessibility issues in the latest "files-*.json" according to WCAG 2.2 guidelines.
-        - The analysis must include both your own findings and the violations from the latest "axecore-*.json"
-        - Contextualize your analysis by reviewing the entire file, considering how different elements interact and how they might affect accessibility.
-        - Include issues identified in the latest 'axecore-*.json' file, mapping them to the relevant locations in "file-*.json" where possible.
-      3. Provide solutions based on the issues identified, suggest accurate code improvements.
-        - Locate the issue: Each issue must have a valid location (line) defined in "file-*.json".
-        - Resolve the issue: Provide one single solution per issue.
-        - Skip: If you cannot map or resolve an issue, skip it without generating a solution.
-        - If the issue can be resolved with a single line of code, provide the original line, not placeholder text (e.g., "...").
-        - For multiline fixes, fix the issue, the unchanged content inside can be replace with '...' to indicate that the code is incomplete.
-        - Ensure that the suggested improvements are functional and adhere to accessibility best practices and correctness.
-        - If no definitive improvement can be made, provide a message with relevant keywords for users to search and resolve the issue manually.
-      4. Before returning the suggestions, validate the suggestions and modify them accordingly if not pass any of these validation criteria:
-        - Validate that the suggestions consider the surrounding code context. This includes ensuring that conditional rendering, variable states, and the overall structure of the component or file are taken into account.
-        - Suggestions should not introduce new bugs or alter the intended behavior of the application.
-        - Ensure that the improvements adhere to established accessibility guidelines WCAG 2.2
-        - Validate that the suggested changes do not negatively affect the visual presentation or user experience.
-      5. Strictly return a valid JSON, with no extra explanation, text, code block delimiters, or newlines. The JSON should be an array of objects, where each object represents a file with accessibility issues.
+          From this input data, please use identify any accessibility issues in the codebase according to WCAG 2.2 guidelines. Provide suggestions for code improvements based on the issues identified. Ensure that the suggestions are accurate and adhere to accessibility best practices. 
 
-      The output must be strictly following this structure:
-      [
-        {
-          fileName:string, //  The name of file having issues
-          issues: [ // An array of objects, where each object represents an issue in the file
+          The second json file you will receive is the WCAG 2.2 guidelines. Please use these to inform the suggestions you provide.
+
+          Your task is to:
+          1. Read through the upcoming json file and identify accessibility issues according to WCAG 2.2 guidelines.
+            - Contextualize your analysis by reviewing the entire file, considering how different elements interact and how they might affect accessibility.
+          2. Provide solutions based on the issues identified, suggest accurate code improvements.
+            - Locate the issue: Each issue must have a valid line number".
+            - Resolve the issue: Provide one single solution per issue. 
+            - Skip: If you cannot map or resolve an issue, skip it without generating a solution.
+            - If the issue can be resolved with a single line of code, provide the original line, not placeholder text (e.g., "...").
+            - Do not do multi line fixes. Just provide the exact line of code that needs to be fixed. You can do multiple suggestions for the same file just one line at a time.
+            - Ensure that the suggested improvements are functional and adhere to accessibility best practices and correctness.
+            - If no definitive improvement can be made, provide a message with relevant keywords for users to search and resolve the issue manually.
+            - The suggestion should be the exact code and nothing else. The code provided is going to replace the exact line of the identified issue. So please ensure you provide the exact code that should replace the line.
+            - For any quotes required in the suggestion please use single quotes. Do not try to use escape characters as this breaks the response for us. 
+            - For the type of issue, use the exact title of the issue as per the WCAG 2.2 guidelines.
+          3. Before returning the suggestions, validate the suggestions and modify them accordingly if not pass any of these validation criteria:
+            - Validate that the suggestions consider the surrounding code context. This includes ensuring that conditional rendering, variable states, and the overall structure of the component or file are taken into account.
+            - Suggestions should not introduce new bugs or alter the intended behavior of the application.
+            - Ensure that the improvements adhere to established accessibility guidelines WCAG 2.2
+            - Validate that the suggested changes do not negatively affect the visual presentation or user experience.
+          4. Strictly return a valid JSON, with no extra explanation, text, code block delimiters, or newlines. The JSON should be an array of objects, where each object represents a file with accessibility issues.
+          5. You must do this for every file provided. There are often multiple files needing accessibility improvements.
+
+          The output must be strictly following this structure:
+          [
             {
-              location: number, // The exact line of the issue.
-              impact: string, // The severity of the issue based on axe-core's analysis.
-              type: string, // The type of accessibility issue, based on predefined WCAG guidelines.
-              improvement: string // The suggested code improvement to fix the issue.
+              fileName:string, //  The name of file having issues
+              issues: [ // An array of objects, where each object represents an issue in the file
+                {
+                  location: number, // The exact line of the issue.
+                  impact: string, // The severity of the issue based on axe-core's analysis.
+                  type: string, // The type/title of accessibility issue, based on predefined WCAG guidelines.
+                  improvement: string // The suggested code improvement to fix the issue.
+                }
+              ]
             }
           ]
-        }
-      ]
-    `;
 
-    const thread = await client.beta.threads.create({
+          HERE IS THE JSON FILE OF THE WCAG 2.2 GUIDELINES:
+
+          ${wcag_data}
+
+          HERE IS THE JSON FILE OF THE LINE BY LINE BREAKDOWN OF MY CODEBASE:
+
+          ${files_data}
+        `;
+
+    const completion = await openai.beta.chat.completions.parse({
+      model: 'gpt-4o-mini',
       messages: [
         {
-          role: 'user',
-          content: prompt,
+          role: 'system',
+          content:
+            'You are an expert frontend developer in ReactJS, VueJS, Angular and Web accessibility and tasked with helping me improve the accessibility of my frontend code according to WCAG 2.2 guidelines.',
         },
+        { role: 'user', content: prompt },
       ],
-      tool_resources: {
-        file_search: {
-          vector_store_ids: [contextId],
-        },
-      },
+      response_format: zodResponseFormat(ResponseFormat, 'response_format'),
     });
 
-    const run = await client.beta.threads.runs.createAndPoll(thread.id, {
-      assistant_id: assistantId,
-    });
+    const suggestions = completion?.choices[0]?.message.parsed;
 
-    const messages = await client.beta.threads.messages.list(thread.id, {
-      run_id: run.id,
-    });
-
-    // kinda strange to be converting obj -> json -> obj but for some reason the initial obj throws error when trying to access text field.
-    const lastMessage = JSON.stringify(messages.data.pop()?.content[0]);
-
-    if (!lastMessage || typeof lastMessage !== 'string') {
-      throw new Error('Invalid message format or empty response');
+    if (!suggestions) {
+      throw new Error('No suggestions were generated.');
     }
 
-    const response = JSON.parse(lastMessage);
-    const suggestions = JSON.parse(response.text.value);
+    const formattedSuggestions = sanitizeSuggestions(suggestions);
 
-    return suggestions;
+    return formattedSuggestions;
   } catch (error) {
     throw error;
   }
 }
 
-export async function uploadFiles(uploadingFiles: string[]): Promise<void> {
-  try {
-    const client = getOpenAIClient();
-    const _config = await getConfig();
-
-    if (!_config?.contextId)
-      throw new Error('Missing context id in configuration file!');
-
-    const fileStreams = uploadingFiles.map((file) => fs.createReadStream(file));
-
-    await client.beta.vectorStores.fileBatches.uploadAndPoll(
-      _config.contextId,
-      {
-        files: fileStreams,
-      },
-    );
-  } catch (error) {
-    throw error;
-  }
-}
+// This function sanitize the suggestions. This is to improve consistency of format and can be expanded on over time.
+const sanitizeSuggestions = (suggestionFile: any) => {
+  return suggestionFile.suggestions.map((file: any) => ({
+    ...file,
+    issues: file.issues.map((issue: any) => ({
+      ...issue,
+      // Replace double quotes and escape chars with single quotes
+      improvement: issue.improvement
+        .replace(/"/g, "'")
+        .replace(/\\"/g, "'")
+        .trim(),
+    })),
+  }));
+};

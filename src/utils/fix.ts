@@ -1,4 +1,4 @@
-import { suggestRepoChanges } from '@/helpers/ModelHandler';
+import { getRepoSuggestions } from '@/helpers/ModelHandler';
 import * as dotenv from 'dotenv';
 import path from 'path';
 
@@ -19,9 +19,8 @@ async function fixRepo() {
       const assistantId = configObj.default.assistantId;
       const contextId = configObj.default.contextId;
 
-      const suggestionList = await suggestRepoChanges(assistantId, contextId);
-
-      return suggestionList;
+      console.log('to do: fix whole repo');
+      return [];
     } else {
       throw new Error('No API Key found');
     }
