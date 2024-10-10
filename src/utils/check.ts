@@ -35,7 +35,7 @@ export async function check(flag?: string) {
       timestamp,
     );
 
-    console.log("Getting suggestions...");
+    console.log('Getting suggestions...');
     const suggestions = await getRepoSuggestions(fileLineBreakdownPath);
 
     // if (flag === 'score') {

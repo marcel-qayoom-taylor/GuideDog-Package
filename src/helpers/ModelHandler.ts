@@ -106,7 +106,7 @@ export async function getRepoSuggestions(fileLineBreakdownPath: string) {
       throw new Error('No suggestions were generated.');
     }
 
-    const formattedSuggestions = sanitizeSuggestions(suggestions); 
+    const formattedSuggestions = sanitizeSuggestions(suggestions);
 
     return formattedSuggestions;
   } catch (error) {
@@ -116,15 +116,15 @@ export async function getRepoSuggestions(fileLineBreakdownPath: string) {
 
 // This function sanitize the suggestions. This is to improve consistency of format and can be expanded on over time.
 const sanitizeSuggestions = (suggestionFile: any) => {
-    return suggestionFile.suggestions.map((file: any) => ({
-      ...file,
-      issues: file.issues.map((issue: any) => ({
-        ...issue,
-        // Replace double quotes and escape chars with single quotes
-        improvement: issue.improvement
-          .replace(/"/g, "'")
-          .replace(/\\"/g, "'")
-          .trim(),
-      })),
-    }));
-}
+  return suggestionFile.suggestions.map((file: any) => ({
+    ...file,
+    issues: file.issues.map((issue: any) => ({
+      ...issue,
+      // Replace double quotes and escape chars with single quotes
+      improvement: issue.improvement
+        .replace(/"/g, "'")
+        .replace(/\\"/g, "'")
+        .trim(),
+    })),
+  }));
+};
