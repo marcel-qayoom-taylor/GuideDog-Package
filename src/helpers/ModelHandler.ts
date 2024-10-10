@@ -8,9 +8,9 @@ const ResponseFormat = z.object({
   suggestions: z.array(
     z.object({
       fileName: z.string(),
-      issue: z.array(
+      issues: z.array(
         z.object({
-          location: z.number(),
+          lineNumber: z.number(),
           impact: z.enum(['critical', 'serious', 'moderate', 'minor']),
           type: z.string(),
           improvement: z.string(),
@@ -45,15 +45,15 @@ export async function getRepoSuggestions(fileLineBreakdownPath: string) {
           1. Read through the upcoming json file and identify accessibility issues according to WCAG 2.2 guidelines.
             - Contextualize your analysis by reviewing the entire file, considering how different elements interact and how they might affect accessibility.
           2. Provide solutions based on the issues identified, suggest accurate code improvements.
-            - Locate the issue: Each issue must have a valid location (line)".
-            - Resolve the issue: Provide one single solution per issue.
+            - Locate the issue: Each issue must have a valid line number".
+            - Resolve the issue: Provide one single solution per issue. 
             - Skip: If you cannot map or resolve an issue, skip it without generating a solution.
             - If the issue can be resolved with a single line of code, provide the original line, not placeholder text (e.g., "...").
-            - For multiline fixes, fix the issue, the unchanged content inside can be replace with '...' to indicate that the code is incomplete.
+            - Do not do multi line fixes. Just provide the exact line of code that needs to be fixed. You can do multiple suggestions for the same file just one line at a time.
             - Ensure that the suggested improvements are functional and adhere to accessibility best practices and correctness.
             - If no definitive improvement can be made, provide a message with relevant keywords for users to search and resolve the issue manually.
-            - The suggestion should be the exact code and nothing else. The code provided is going to replace the exact line of the identified issue. So please ensure you provide the exact code that should replace the line. Including spacing and indentation.
-            - For any quotes required in the suggestion please use single quotes. Do not try to use escape characters as this breaks the response for us.
+            - The suggestion should be the exact code and nothing else. The code provided is going to replace the exact line of the identified issue. So please ensure you provide the exact code that should replace the line.
+            - For any quotes required in the suggestion please use single quotes. Do not try to use escape characters as this breaks the response for us. 
             - For the type of issue, use the exact title of the issue as per the WCAG 2.2 guidelines.
           3. Before returning the suggestions, validate the suggestions and modify them accordingly if not pass any of these validation criteria:
             - Validate that the suggestions consider the surrounding code context. This includes ensuring that conditional rendering, variable states, and the overall structure of the component or file are taken into account.
@@ -88,7 +88,7 @@ export async function getRepoSuggestions(fileLineBreakdownPath: string) {
         `;
 
     const completion = await openai.beta.chat.completions.parse({
-      model: 'gpt-4o-2024-08-06',
+      model: 'gpt-4o-mini',
       messages: [
         {
           role: 'system',
@@ -102,8 +102,29 @@ export async function getRepoSuggestions(fileLineBreakdownPath: string) {
 
     const suggestions = completion?.choices[0]?.message.parsed;
 
-    return suggestions;
+    if (!suggestions) {
+      throw new Error('No suggestions were generated.');
+    }
+
+    const formattedSuggestions = sanitizeSuggestions(suggestions); 
+
+    return formattedSuggestions;
   } catch (error) {
     throw error;
   }
+}
+
+// This function sanitize the suggestions. This is to improve consistency of format and can be expanded on over time.
+const sanitizeSuggestions = (suggestionFile: any) => {
+    return suggestionFile.suggestions.map((file: any) => ({
+      ...file,
+      issues: file.issues.map((issue: any) => ({
+        ...issue,
+        // Replace double quotes and escape chars with single quotes
+        improvement: issue.improvement
+          .replace(/"/g, "'")
+          .replace(/\\"/g, "'")
+          .trim(),
+      })),
+    }));
 }
