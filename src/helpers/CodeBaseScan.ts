@@ -1,9 +1,9 @@
 import { glob } from 'glob';
 import { readIgnore } from '@/helpers/readIgnore';
 import { RUNS_PATH, DIR_PATH } from './config';
+import * as fs from 'fs';
 
 export async function runCodeScan(): Promise<string[]> {
-  console.log('Scanning...');
   const _ignore = readIgnore();
   try {
     const patterns = [
@@ -21,14 +21,13 @@ export async function runCodeScan(): Promise<string[]> {
       ],
     });
 
-    console.log('Scanning completed');
     return filePaths;
   } catch (error) {
     throw error;
   }
 }
 
-export async function getUploadingFiles(timestamp: string): Promise<string[]> {
+export async function getPromptFiles(timestamp: string): Promise<{ [key: string]: string }> {
   try {
     const patterns = [
       `${DIR_PATH}/wcag.json`,
@@ -41,7 +40,21 @@ export async function getUploadingFiles(timestamp: string): Promise<string[]> {
       throw new Error('Missing uploading files!');
     }
 
-    return filePaths;
+    const promptFiles: { [key: string]: string } = {};
+
+    filePaths.forEach(path => {
+      const content = fs.readFileSync(path, 'utf-8');
+
+      if (path.includes('files')) {
+        promptFiles['files_data'] = content;
+      } else if (path.includes('axecore')) {
+        promptFiles['axecore_data'] = content;
+      } else {
+        promptFiles['wcag_data'] = content;
+      }
+    }) 
+
+    return promptFiles;
   } catch (error) {
     throw error;
   }
