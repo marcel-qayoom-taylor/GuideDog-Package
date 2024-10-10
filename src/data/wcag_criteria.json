@@ -1,0 +1,614 @@
+{
+  "wcag_criteria": [
+    {
+      "id": "1.1.1",
+      "title": "1.1.1 Non-text Content",
+      "level": "Level A",
+      "category": "Perceivable",
+      "summary": "All non-text content must have a text alternative, except for specific cases such as decoration, tests, and CAPTCHA."
+    },
+    {
+      "id": "1.2.1",
+      "title": "1.2.1 Audio-only and Video-only (Prerecorded)",
+      "level": "Level A",
+      "category": "Perceivable",
+      "summary": "Provide alternative for prerecorded audio-only and video-only content."
+    },
+    {
+      "id": "1.2.2",
+      "title": "1.2.2 Captions (Prerecorded)",
+      "level": "Level A",
+      "category": "Perceivable",
+      "summary": "Captions are required for prerecorded audio content in synchronized media."
+    },
+    {
+      "id": "1.2.3",
+      "title": "1.2.3 Audio Description or Media Alternative (Prerecorded)",
+      "level": "Level A",
+      "category": "Perceivable",
+      "summary": "An alternative for time-based media or audio description is provided for prerecorded video."
+    },
+    {
+      "id": "1.2.4",
+      "title": "1.2.4 Captions (Live)",
+      "level": "Level AA",
+      "category": "Perceivable",
+      "summary": "Captions are provided for all live audio content in synchronized media."
+    },
+    {
+      "id": "1.2.5",
+      "title": "1.2.5 Audio Description (Prerecorded)",
+      "level": "Level AA",
+      "category": "Perceivable",
+      "summary": "Audio description is provided for prerecorded video content in synchronized media."
+    },
+    {
+      "id": "1.2.6",
+      "title": "1.2.6 Sign Language (Prerecorded)",
+      "level": "Level AAA",
+      "category": "Perceivable",
+      "summary": "Sign language interpretation is provided for prerecorded audio content in synchronized media."
+    },
+    {
+      "id": "1.2.7",
+      "title": "1.2.7 Extended Audio Description (Prerecorded)",
+      "level": "Level AAA",
+      "category": "Perceivable",
+      "summary": "Extended audio description is provided for prerecorded video when standard audio descriptions are insufficient."
+    },
+    {
+      "id": "1.2.8",
+      "title": "1.2.8 Media Alternative (Prerecorded)",
+      "level": "Level AAA",
+      "category": "Perceivable",
+      "summary": "Alternative for time-based media is provided for all prerecorded synchronized media and video-only content."
+    },
+    {
+      "id": "1.2.9",
+      "title": "1.2.9 Audio-only (Live)",
+      "level": "Level AAA",
+      "category": "Perceivable",
+      "summary": "An alternative for time-based media is provided for live audio-only content."
+    },
+    {
+      "id": "1.3.1",
+      "title": "1.3.1 Info and Relationships",
+      "level": "Level A",
+      "category": "Perceivable",
+      "summary": "Information and structure must be programmatically determinable or available in text."
+    },
+    {
+      "id": "1.3.2",
+      "title": "1.3.2 Meaningful Sequence",
+      "level": "Level A",
+      "category": "Perceivable",
+      "summary": "Content presented in a meaningful sequence can be programmatically determined."
+    },
+    {
+      "id": "1.3.3",
+      "title": "1.3.3 Sensory Characteristics",
+      "level": "Level A",
+      "category": "Perceivable",
+      "summary": "Instructions do not rely solely on sensory characteristics such as shape, color, size, or sound."
+    },
+    {
+      "id": "1.3.4",
+      "title": "1.3.4 Orientation",
+      "level": "Level AA (Added in 2.1)",
+      "category": "Perceivable",
+      "summary": "Content does not restrict view and operation to a single orientation unless essential."
+    },
+    {
+      "id": "1.3.5",
+      "title": "1.3.5 Identify Input Purpose",
+      "level": "Level AA (Added in 2.1)",
+      "category": "Perceivable",
+      "summary": "The purpose of input fields collecting user information is programmatically determinable."
+    },
+    {
+      "id": "1.3.6",
+      "title": "1.3.6 Identify Purpose",
+      "level": "Level AAA (Added in 2.1)",
+      "category": "Perceivable",
+      "summary": "The purpose of UI components can be programmatically determined."
+    },
+    {
+      "id": "1.4.1",
+      "title": "1.4.1 Use of Color",
+      "level": "Level A",
+      "category": "Perceivable",
+      "summary": "Color is not used as the only visual means of conveying information or prompting a response."
+    },
+    {
+      "id": "1.4.2",
+      "title": "1.4.2 Audio Control",
+      "level": "Level A",
+      "category": "Perceivable",
+      "summary": "A mechanism is available to stop or control audio that plays automatically for more than 3 seconds."
+    },
+    {
+      "id": "1.4.3",
+      "title": "1.4.3 Contrast (Minimum)",
+      "level": "Level AA",
+      "category": "Perceivable",
+      "summary": "Text and images of text must have a contrast ratio of at least 4.5:1."
+    },
+    {
+      "id": "1.4.4",
+      "title": "1.4.4 Resize Text",
+      "level": "Level AA",
+      "category": "Perceivable",
+      "summary": "Text can be resized without assistive technology up to 200% without loss of content or functionality."
+    },
+    {
+      "id": "1.4.5",
+      "title": "1.4.5 Images of Text",
+      "level": "Level AA",
+      "category": "Perceivable",
+      "summary": "Text is used to convey information rather than images of text, except in specific cases."
+    },
+    {
+      "id": "1.4.6",
+      "title": "1.4.6 Contrast (Enhanced)",
+      "level": "Level AAA",
+      "category": "Perceivable",
+      "summary": "Text and images of text have a contrast ratio of at least 7:1."
+    },
+    {
+      "id": "1.4.7",
+      "title": "1.4.7 Low or No Background Audio",
+      "level": "Level AAA",
+      "category": "Perceivable",
+      "summary": "Audio-only content has no background sounds, or background sounds are at least 20 decibels lower than the foreground."
+    },
+    {
+      "id": "1.4.8",
+      "title": "1.4.8 Visual Presentation",
+      "level": "Level AAA",
+      "category": "Perceivable",
+      "summary": "Blocks of text have mechanisms for adjusting visual presentation such as color and spacing."
+    },
+    {
+      "id": "1.4.9",
+      "title": "1.4.9 Images of Text (No Exception)",
+      "level": "Level AAA",
+      "category": "Perceivable",
+      "summary": "Images of text are only used for decoration or where a specific presentation is essential."
+    },
+    {
+      "id": "1.4.10",
+      "title": "1.4.10 Reflow",
+      "level": "Level AA (Added in 2.1)",
+      "category": "Perceivable",
+      "summary": "Content can be presented without loss of information or functionality, and without requiring scrolling in two dimensions."
+    },
+    {
+      "id": "1.4.11",
+      "title": "1.4.11 Non-text Contrast",
+      "level": "Level AA (Added in 2.1)",
+      "category": "Perceivable",
+      "summary": "Non-text content and UI components must have a contrast ratio of at least 3:1 against adjacent colors."
+    },
+    {
+      "id": "1.4.12",
+      "title": "1.4.12 Text Spacing",
+      "level": "Level AA (Added in 2.1)",
+      "category": "Perceivable",
+      "summary": "Text spacing can be adjusted without loss of content or functionality."
+    },
+    {
+      "id": "1.4.13",
+      "title": "1.4.13 Content on Hover or Focus",
+      "level": "Level AA (Added in 2.1)",
+      "category": "Perceivable",
+      "summary": "Content that appears on hover or focus must be dismissible and persistent."
+    },
+    {
+      "id": "2.1.1",
+      "title": "2.1.1 Keyboard",
+      "level": "Level A",
+      "category": "Operable",
+      "summary": "All functionality must be operable through a keyboard interface without specific timing requirements."
+    },
+    {
+      "id": "2.1.2",
+      "title": "2.1.2 No Keyboard Trap",
+      "level": "Level A",
+      "category": "Operable",
+      "summary": "Keyboard focus can be moved away from components using a keyboard interface."
+    },
+    {
+      "id": "2.1.3",
+      "title": "2.1.3 Keyboard (No Exception)",
+      "level": "Level AAA",
+      "category": "Operable",
+      "summary": "All functionality must be operable through a keyboard interface without timing exceptions."
+    },
+    {
+      "id": "2.1.4",
+      "title": "2.1.4 Character Key Shortcuts",
+      "level": "Level A (Added in 2.1)",
+      "category": "Operable",
+      "summary": "Single-key shortcuts can be turned off or remapped."
+    },
+    {
+      "id": "2.2.1",
+      "title": "2.2.1 Timing Adjustable",
+      "level": "Level A",
+      "category": "Operable",
+      "summary": "Time limits are adjustable, can be turned off, or users are warned before time expires."
+    },
+    {
+      "id": "2.2.2",
+      "title": "2.2.2 Pause, Stop, Hide",
+      "level": "Level A",
+      "category": "Operable",
+      "summary": "Users can pause, stop, or hide moving or auto-updating content."
+    },
+    {
+      "id": "2.2.3",
+      "title": "2.2.3 No Timing",
+      "level": "Level AAA",
+      "category": "Operable",
+      "summary": "Timing is not an essential part of events, except for real-time and synchronized media."
+    },
+    {
+      "id": "2.2.4",
+      "title": "2.2.4 Interruptions",
+      "level": "Level AAA",
+      "category": "Operable",
+      "summary": "Interruptions can be postponed or suppressed, except for emergencies."
+    },
+    {
+      "id": "2.2.5",
+      "title": "2.2.5 Re-authenticating",
+      "level": "Level AAA",
+      "category": "Operable",
+      "summary": "Re-authenticating does not cause data loss."
+    },
+    {
+      "id": "2.2.6",
+      "title": "2.2.6 Timeouts",
+      "level": "Level AAA (Added in 2.1)",
+      "category": "Operable",
+      "summary": "Users are warned about inactivity timeouts that could cause data loss."
+    },
+    {
+      "id": "2.3.1",
+      "title": "2.3.1 Three Flashes or Below Threshold",
+      "level": "Level A",
+      "category": "Operable",
+      "summary": "Content does not flash more than three times per second unless it is below the flash threshold."
+    },
+    {
+      "id": "2.3.2",
+      "title": "2.3.2 Three Flashes",
+      "level": "Level AAA",
+      "category": "Operable",
+      "summary": "Content does not flash more than three times per second."
+    },
+    {
+      "id": "2.3.3",
+      "title": "2.3.3 Animation from Interactions",
+      "level": "Level AAA (Added in 2.1)",
+      "category": "Operable",
+      "summary": "Users can disable motion animation triggered by interaction."
+    },
+    {
+      "id": "2.4.1",
+      "title": "2.4.1 Bypass Blocks",
+      "level": "Level A",
+      "category": "Operable",
+      "summary": "A mechanism is available to bypass blocks of repeated content."
+    },
+    {
+      "id": "2.4.2",
+      "title": "2.4.2 Page Titled",
+      "level": "Level A",
+      "category": "Operable",
+      "summary": "Web pages have titles that describe their topic or purpose."
+    },
+    {
+      "id": "2.4.3",
+      "title": "2.4.3 Focus Order",
+      "level": "Level A",
+      "category": "Operable",
+      "summary": "The focus order must preserve meaning and operability."
+    },
+    {
+      "id": "2.4.4",
+      "title": "2.4.4 Link Purpose (In Context)",
+      "level": "Level A",
+      "category": "Operable",
+      "summary": "The purpose of each link can be determined from the link text or its context."
+    },
+    {
+      "id": "2.4.5",
+      "title": "2.4.5 Multiple Ways",
+      "level": "Level AA",
+      "category": "Operable",
+      "summary": "More than one way is available to locate a web page within a set of pages, except in sequential steps."
+    },
+    {
+      "id": "2.4.6",
+      "title": "2.4.6 Headings and Labels",
+      "level": "Level AA",
+      "category": "Operable",
+      "summary": "Headings and labels describe the topic or purpose."
+    },
+    {
+      "id": "2.4.7",
+      "title": "2.4.7 Focus Visible",
+      "level": "Level AA",
+      "category": "Operable",
+      "summary": "Keyboard focus is visible for all user interface elements."
+    },
+    {
+      "id": "2.4.8",
+      "title": "2.4.8 Location",
+      "level": "Level AAA",
+      "category": "Operable",
+      "summary": "Users can determine their location within a set of web pages."
+    },
+    {
+      "id": "2.4.9",
+      "title": "2.4.9 Link Purpose (Link Only)",
+      "level": "Level AAA",
+      "category": "Operable",
+      "summary": "The purpose of each link can be determined from the link text alone."
+    },
+    {
+      "id": "2.4.10",
+      "title": "2.4.10 Section Headings",
+      "level": "Level AAA",
+      "category": "Operable",
+      "summary": "Section headings are used to organize content."
+    },
+    {
+      "id": "2.4.11",
+      "title": "2.4.11 Focus Not Obscured (Minimum)",
+      "level": "Level AA (Added in 2.2)",
+      "category": "Operable",
+      "summary": "The focused component is not hidden by content created by the author."
+    },
+    {
+      "id": "2.4.12",
+      "title": "2.4.12 Focus Not Obscured (Enhanced)",
+      "level": "Level AAA (Added in 2.2)",
+      "category": "Operable",
+      "summary": "No part of the focused component is hidden by content created by the author."
+    },
+    {
+      "id": "2.4.13",
+      "title": "2.4.13 Focus Appearance",
+      "level": "Level AAA (Added in 2.2)",
+      "category": "Operable",
+      "summary": "Focus indicators must be clearly visible and have sufficient contrast."
+    },
+    {
+      "id": "2.5.1",
+      "title": "2.5.1 Pointer Gestures",
+      "level": "Level A (Added in 2.1)",
+      "category": "Operable",
+      "summary": "Multipoint gestures can be operated with a single pointer unless essential."
+    },
+    {
+      "id": "2.5.2",
+      "title": "2.5.2 Pointer Cancellation",
+      "level": "Level A (Added in 2.1)",
+      "category": "Operable",
+      "summary": "Pointer input actions must be cancellable or abortable."
+    },
+    {
+      "id": "2.5.3",
+      "title": "2.5.3 Label in Name",
+      "level": "Level A (Added in 2.1)",
+      "category": "Operable",
+      "summary": "The visible label of a component matches its programmatic name."
+    },
+    {
+      "id": "2.5.4",
+      "title": "2.5.4 Motion Actuation",
+      "level": "Level A (Added in 2.1)",
+      "category": "Operable",
+      "summary": "Functionality that can be operated by motion can also be operated by UI elements."
+    },
+    {
+      "id": "2.5.5",
+      "title": "2.5.5 Target Size (Enhanced)",
+      "level": "Level AAA (Added in 2.1)",
+      "category": "Operable",
+      "summary": "Pointer input targets are at least 44 by 44 CSS pixels."
+    },
+    {
+      "id": "2.5.6",
+      "title": "2.5.6 Concurrent Input Mechanisms",
+      "level": "Level AAA (Added in 2.1)",
+      "category": "Operable",
+      "summary": "Web content does not restrict input modalities available on a platform."
+    },
+    {
+      "id": "2.5.7",
+      "title": "2.5.7 Dragging Movements",
+      "level": "Level AA (Added in 2.2)",
+      "category": "Operable",
+      "summary": "Functionality that uses dragging can be operated without dragging unless essential."
+    },
+    {
+      "id": "2.5.8",
+      "title": "2.5.8 Target Size (Minimum)",
+      "level": "Level AA (Added in 2.2)",
+      "category": "Operable",
+      "summary": "Pointer input targets are at least 24 by 24 CSS pixels, with exceptions."
+    },
+    {
+      "id": "3.1.1",
+      "title": "3.1.1 Language of Page",
+      "level": "Level A",
+      "category": "Understandable",
+      "summary": "The default human language of each web page can be programmatically determined."
+    },
+    {
+      "id": "3.1.2",
+      "title": "3.1.2 Language of Parts",
+      "level": "Level AA",
+      "category": "Understandable",
+      "summary": "The human language of each passage or phrase can be programmatically determined."
+    },
+    {
+      "id": "3.1.3",
+      "title": "3.1.3 Unusual Words",
+      "level": "Level AAA",
+      "category": "Understandable",
+      "summary": "A mechanism is available for identifying definitions of unusual or restricted words."
+    },
+    {
+      "id": "3.1.4",
+      "title": "3.1.4 Abbreviations",
+      "level": "Level AAA",
+      "category": "Understandable",
+      "summary": "A mechanism is available for identifying abbreviations."
+    },
+    {
+      "id": "3.1.5",
+      "title": "3.1.5 Reading Level",
+      "level": "Level AAA",
+      "category": "Understandable",
+      "summary": "Supplemental content is available for text requiring reading ability more advanced than lower secondary education level."
+    },
+    {
+      "id": "3.1.6",
+      "title": "3.1.6 Pronunciation",
+      "level": "Level AAA",
+      "category": "Understandable",
+      "summary": "A mechanism is available for identifying the pronunciation of words where meaning is ambiguous."
+    },
+    {
+      "id": "3.2.1",
+      "title": "3.2.1 On Focus",
+      "level": "Level A",
+      "category": "Understandable",
+      "summary": "When a component receives focus, it does not change the context."
+    },
+    {
+      "id": "3.2.2",
+      "title": "3.2.2 On Input",
+      "level": "Level A",
+      "category": "Understandable",
+      "summary": "Changing a UI component does not change the context without user awareness."
+    },
+    {
+      "id": "3.2.3",
+      "title": "3.2.3 Consistent Navigation",
+      "level": "Level AA",
+      "category": "Understandable",
+      "summary": "Navigational mechanisms occur in the same order on all pages."
+    },
+    {
+      "id": "3.2.4",
+      "title": "3.2.4 Consistent Identification",
+      "level": "Level AA",
+      "category": "Understandable",
+      "summary": "Components that have the same functionality are consistently identified."
+    },
+    {
+      "id": "3.2.5",
+      "title": "3.2.5 Change on Request",
+      "level": "Level AAA",
+      "category": "Understandable",
+      "summary": "Changes of context are only initiated by user request."
+    },
+    {
+      "id": "3.2.6",
+      "title": "3.2.6 Consistent Help",
+      "level": "Level A (Added in 2.2)",
+      "category": "Understandable",
+      "summary": "Help mechanisms are presented in the same order across pages."
+    },
+    {
+      "id": "3.3.1",
+      "title": "3.3.1 Error Identification",
+      "level": "Level A",
+      "category": "Understandable",
+      "summary": "Input errors are identified and described to the user in text."
+    },
+    {
+      "id": "3.3.2",
+      "title": "3.3.2 Labels or Instructions",
+      "level": "Level A",
+      "category": "Understandable",
+      "summary": "Labels or instructions are provided when user input is required."
+    },
+    {
+      "id": "3.3.3",
+      "title": "3.3.3 Error Suggestion",
+      "level": "Level AA",
+      "category": "Understandable",
+      "summary": "Suggestions for correction are provided when input errors are detected."
+    },
+    {
+      "id": "3.3.4",
+      "title": "3.3.4 Error Prevention (Legal, Financial, Data)",
+      "level": "Level AA",
+      "category": "Understandable",
+      "summary": "For pages that involve legal commitments, submissions are reversible, checked, and confirmed."
+    },
+    {
+      "id": "3.3.5",
+      "title": "3.3.5 Help",
+      "level": "Level AAA",
+      "category": "Understandable",
+      "summary": "Context-sensitive help is available."
+    },
+    {
+      "id": "3.3.6",
+      "title": "3.3.6 Error Prevention (All)",
+      "level": "Level AAA",
+      "category": "Understandable",
+      "summary": "Submissions are reversible, checked, and confirmed for all web pages that require user input."
+    },
+    {
+      "id": "3.3.7",
+      "title": "3.3.7 Redundant Entry",
+      "level": "Level A (Added in 2.2)",
+      "category": "Understandable",
+      "summary": "Information previously entered by the user is auto-populated or selectable."
+    },
+    {
+      "id": "3.3.8",
+      "title": "3.3.8 Accessible Authentication (Minimum)",
+      "level": "Level AA (Added in 2.2)",
+      "category": "Understandable",
+      "summary": "Authentication processes do not require cognitive tests unless an alternative method is provided."
+    },
+    {
+      "id": "3.3.9",
+      "title": "3.3.9 Accessible Authentication (Enhanced)",
+      "level": "Level AAA (Added in 2.2)",
+      "category": "Understandable",
+      "summary": "Cognitive function tests in authentication are not required, or alternatives are provided."
+    },
+    {
+      "id": "4.1.1",
+      "title": "4.1.1 Parsing",
+      "level": "Level A",
+      "category": "Robust",
+      "summary": "Elements must have complete start and end tags, be nested correctly, and not contain duplicate attributes."
+    },
+    {
+      "id": "4.1.2",
+      "title": "4.1.2 Name, Role, Value",
+      "level": "Level A",
+      "category": "Robust",
+      "summary": "UI components must have their name, role, and value programmatically determined."
+    },
+    {
+      "id": "4.1.3",
+      "title": "4.1.3 Status Messages",
+      "level": "Level AA (Added in 2.1)",
+      "category": "Robust",
+      "summary": "Status messages can be programmatically determined and presented to assistive technologies."
+    }
+  ]
+}
+
