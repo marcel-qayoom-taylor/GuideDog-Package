@@ -18,11 +18,13 @@ const ResponseFormat = z.object({
   ),
 });
 
-export async function getRepoSuggestions(promptFiles: { [key: string]: string }) {
+export async function getRepoSuggestions(promptFiles: {
+  [key: string]: string;
+}) {
   try {
     const openai = getOpenAIClient();
 
-    const { files_data, axecore_data, wcag_data} = promptFiles;
+    const { files_data, axecore_data, wcag_data } = promptFiles;
 
     const prompt = `I am providing you three json files. The first is a line by line breakdown of every front end related file in my codebase. This file is in the format of:
           {

@@ -26,9 +26,7 @@ const retry = async (
         );
       }
     } catch (error) {
-      throw new Error(
-        `Serving attempt ${attempt + 1} failed: ${error}.`,
-      );
+      throw new Error(`Serving attempt ${attempt + 1} failed: ${error}.`);
     }
   }
 

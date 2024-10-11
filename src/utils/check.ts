@@ -1,10 +1,5 @@
 import * as fs from 'fs';
-import {
-  getConfig,
-  DIR_PATH,
-  createNewRun,
-  RUNS_PATH,
-} from '@/helpers/config';
+import { getConfig, DIR_PATH, createNewRun, RUNS_PATH } from '@/helpers/config';
 import { analyse } from '@/helpers/Axecore';
 import { getPromptFiles, runCodeScan } from '@/helpers/CodeBaseScan';
 import { createfileLineBreakdown } from '@/helpers/FileLineBreakdown';
@@ -21,7 +16,7 @@ export async function check(flag?: string) {
       throw new Error('Something wrong with configuration file');
     }
 
-  console.log('Scanning...');
+    console.log('Scanning...');
 
     const { timestamp, newRunPath } = createNewRun();
 
@@ -30,11 +25,7 @@ export async function check(flag?: string) {
 
     const filePaths = await runCodeScan();
 
-    createfileLineBreakdown(
-      filePaths,
-      newRunPath,
-      timestamp,
-    );
+    createfileLineBreakdown(filePaths, newRunPath, timestamp);
 
     console.log('Scanning completed');
 

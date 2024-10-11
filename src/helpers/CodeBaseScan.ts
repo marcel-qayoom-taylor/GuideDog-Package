@@ -27,7 +27,9 @@ export async function runCodeScan(): Promise<string[]> {
   }
 }
 
-export async function getPromptFiles(timestamp: string): Promise<{ [key: string]: string }> {
+export async function getPromptFiles(
+  timestamp: string,
+): Promise<{ [key: string]: string }> {
   try {
     const patterns = [
       `${DIR_PATH}/wcag.json`,
@@ -42,7 +44,7 @@ export async function getPromptFiles(timestamp: string): Promise<{ [key: string]
 
     const promptFiles: { [key: string]: string } = {};
 
-    filePaths.forEach(path => {
+    filePaths.forEach((path) => {
       const content = fs.readFileSync(path, 'utf-8');
 
       if (path.includes('files')) {
@@ -52,7 +54,7 @@ export async function getPromptFiles(timestamp: string): Promise<{ [key: string]
       } else {
         promptFiles['wcag_data'] = content;
       }
-    }) 
+    });
 
     return promptFiles;
   } catch (error) {
