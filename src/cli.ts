@@ -4,7 +4,7 @@ import inquirer from 'inquirer';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import path from 'path';
-import { init, check, fixFile, fixRepo } from './index';
+import { init, check} from './index';
 import { DIR_PATH } from './helpers/config';
 import { applyAllSuggestions, applyFileSuggestions } from './utils/fix';
 
@@ -110,8 +110,8 @@ program
       if (scopeRes.scope == 'Specific file') {
         const fileRes = await inquirer.prompt({
           type: 'input',
-          name: 'filePath',
-          message: 'Enter your OpenAI API key:',
+          name: 'fileName',
+          message: 'Enter the file name: ',
           validate: async (input) => {
             const file = path.join(DIR_PATH, input);
 
@@ -123,8 +123,7 @@ program
           },
         });
 
-        const file = path.join(DIR_PATH, fileRes.filePath);
-        applyFileSuggestions();
+        applyFileSuggestions(fileRes.fileName);
       } else {
         applyAllSuggestions();
       }
