@@ -49,7 +49,8 @@ export function applySuggestion(fileIssue: FileIssue, issue: Issue): void {
 }
 
 export async function applyAllSuggestions(): Promise<void> {
-  const fileIssues: FileIssue[] = JSON.parse(jsonPath);
+  const fileContent = fs.readFileSync(jsonPath, 'utf-8');
+  const fileIssues: FileIssue[] = JSON.parse(fileContent);
 
   fileIssues.forEach((fileIssue) => {
       fileIssue.issues.forEach((issue) => {
@@ -61,7 +62,8 @@ export async function applyAllSuggestions(): Promise<void> {
 }
 
 export async function applyFileSuggestions(fileName: string): Promise<void> {
-  const fileIssues: FileIssue[] = JSON.parse(jsonPath);
+  const fileContent = fs.readFileSync(jsonPath, 'utf-8');
+  const fileIssues: FileIssue[] = JSON.parse(fileContent);
 
   const fileIssue = fileIssues.find((issue) => issue.fileName === fileName);
 
@@ -74,4 +76,16 @@ export async function applyFileSuggestions(fileName: string): Promise<void> {
   } else {
       console.error(`File with name ${fileName} not found in the JSON data.`);
   }
+}
+
+export function getAllFiles(): { filePath: string; fileName: string }[] {
+  const fileContent = fs.readFileSync(jsonPath, 'utf-8');
+  const fileIssues: FileIssue[] = JSON.parse(fileContent);
+
+  const response = fileIssues.map(fileIssue => ({
+      filePath: path.resolve(fileIssue.fileName),
+      fileName: fileIssue.fileName
+  }));
+
+  return response;
 }
