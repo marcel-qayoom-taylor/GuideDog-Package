@@ -1,6 +1,7 @@
 import { getRepoSuggestions } from '@/helpers/ModelHandler';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
+import { json } from 'node:stream/consumers';
 import * as path from 'path';
 
 interface Issue {
@@ -59,23 +60,18 @@ export async function applyAllSuggestions(): Promise<void> {
   console.log('All suggestions have been applied across the repository.');
 }
 
-export async function applyFileSuggestions(fileIndex: number, suggestionJson: string): Promise<void> {
-  const fileIssues: FileIssue[] = JSON.parse(suggestionJson);
+export async function applyFileSuggestions(fileName: string): Promise<void> {
+  const fileIssues: FileIssue[] = JSON.parse(jsonPath);
 
-  if (fileIndex >= 0 && fileIndex < fileIssues.length) {
-      const fileIssue = fileIssues[fileIndex];
+  const fileIssue = fileIssues.find((issue) => issue.fileName === fileName);
 
-      if (fileIssue) {
-          fileIssue.issues.forEach((issue) => {
-              applySuggestion(fileIssue, issue);
-          });
+  if (fileIssue) {
+      fileIssue.issues.forEach((issue) => {
+          applySuggestion(fileIssue, issue);
+      });
 
-          console.log(`All issues for file ${fileIssue.fileName} have been applied.`);
-      } else {
-          console.error(`File issue at index ${fileIndex} is undefined.`);
-      }
+      console.log(`All issues for file ${fileIssue.fileName} have been applied.`);
   } else {
-      console.error(`Invalid file index: ${fileIndex}`);
+      console.error(`File with name ${fileName} not found in the JSON data.`);
   }
 }
-

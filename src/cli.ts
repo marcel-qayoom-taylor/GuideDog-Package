@@ -6,6 +6,7 @@ import * as fs from 'fs';
 import path from 'path';
 import { init, check, fixFile, fixRepo } from './index';
 import { DIR_PATH } from './helpers/config';
+import { applyAllSuggestions, applyFileSuggestions } from './utils/fix';
 
 const program = new Command();
 dotenv.config();
@@ -123,9 +124,9 @@ program
         });
 
         const file = path.join(DIR_PATH, fileRes.filePath);
-        fixFile(file);
+        applyFileSuggestions();
       } else {
-        fixRepo();
+        applyAllSuggestions();
       }
 
       console.log('✅ Fix completed!');
