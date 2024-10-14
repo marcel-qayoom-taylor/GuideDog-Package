@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import path from 'path';
 import _ from 'lodash';
 import wcag from '@/data/wcag.json';
+import { pathToFileURL } from 'url';  // Add this import
 
 interface IConfig {
   framework?: string;
@@ -23,7 +24,7 @@ export async function initConfig(_config: IConfig) {
     }
 
     if (fs.existsSync(CONFIG_PATH)) {
-      let configObj = await import(CONFIG_PATH);
+      let configObj = await import(pathToFileURL(CONFIG_PATH).href);
       configObj = _.merge(configObj.default, _config); // Deep merge the configurations
 
       fs.writeFileSync(
@@ -49,7 +50,7 @@ export async function initConfig(_config: IConfig) {
 
 export const getConfig = async (): Promise<IConfig> => {
   try {
-    const _config: IConfig = (await import(CONFIG_PATH)).default;
+    const _config: IConfig = (await import(pathToFileURL(CONFIG_PATH).href)).default;  // Updated
 
     if (!_config) {
       throw new Error('Configuration file can not be found');
