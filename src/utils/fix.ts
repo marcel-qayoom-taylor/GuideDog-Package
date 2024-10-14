@@ -1,32 +1,77 @@
 import { getRepoSuggestions } from '@/helpers/ModelHandler';
 import * as dotenv from 'dotenv';
-import path from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
+
+interface Issue {
+    lineNumber: number;
+    impact: string;
+    type: string;
+    improvement: string;
+}
+
+interface FileIssue {
+    fileName: string;
+    issues: Issue[];
+}
+
+export const jsonPath = path.join(process.cwd(), '.guidedog', 'suggestions.json');
 
 export async function fixFile(dir: string) {
   console.log(`fix specific file at [${dir}]`);
 }
 
-async function fixRepo() {
-  try {
-    dotenv.config();
-    const apiKey = process.env.OPENAI_API_KEY;
-    const directoryPath = path.join(process.cwd(), '.guidedog');
-    let configObj = await import(
-      path.join(directoryPath, 'guidedog.config.cjs')
-    );
+export function applySuggestion(fileIssue: FileIssue, issue: Issue): void {
+  const { fileName } = fileIssue;
+  const { lineNumber, improvement } = issue;
 
-    if (apiKey != null) {
-      const assistantId = configObj.default.assistantId;
-      const contextId = configObj.default.contextId;
+  const filePath = path.resolve(fileName);
+  if (!fs.existsSync(filePath)) {
+      console.error(`File not found: ${fileName}`);
+      return;
+  }
 
-      console.log('to do: fix whole repo');
-      return [];
-    } else {
-      throw new Error('No API Key found');
-    }
-  } catch (error) {
-    console.log('Error getting suggestions for the Repo: ' + error);
+  let fileContent: string = fs.readFileSync(filePath, 'utf-8');
+  const fileLines: string[] = fileContent.split('\n');
+
+  if (lineNumber - 1 >= fileLines.length) {
+      console.error(`Line number ${lineNumber} out of range for file ${fileName}`);
+      return;
+  }
+
+  fileLines[lineNumber - 1] = improvement;
+
+  fileContent = fileLines.join('\n');
+  fs.writeFileSync(filePath, fileContent, 'utf-8');
+
+  console.log(`Updated line ${lineNumber} in ${fileName}`);
+}
+
+export async function applyAllSuggestions(): Promise<void> {
+  const fileIssues: FileIssue[] = JSON.parse(jsonPath);
+
+  fileIssues.forEach((fileIssue) => {
+      fileIssue.issues.forEach((issue) => {
+          applySuggestion(fileIssue, issue);
+      });
+  });
+
+  console.log('All suggestions have been applied across the repository.');
+}
+
+export async function applyFileSuggestions(fileIndex: number, suggestionJson: string): Promise<void> {
+  const fileIssues: FileIssue[] = JSON.parse(jsonPath);
+
+  if (fileIndex >= 0 && fileIndex < fileIssues.length) {
+      const fileIssue = fileIssues[fileIndex];
+      
+      fileIssue.issues.forEach((issue) => {
+          applySuggestion(fileIssue, issue);
+      });
+
+      console.log(`All issues for file ${fileIssue.fileName} have been applied.`);
+  } else {
+      console.error(`Invalid file index: ${fileIndex}`);
   }
 }
 
-export { fixRepo };
