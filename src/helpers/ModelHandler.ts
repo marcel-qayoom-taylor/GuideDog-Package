@@ -3,6 +3,22 @@ import { z } from 'zod';
 import { zodResponseFormat } from 'openai/helpers/zod.mjs';
 import wcag_data from '@/data/wcag.json';
 
+enum Impact {
+  'critical', 'serious', 'moderate', 'minor'
+}
+
+export interface Issue {
+  lineNumber: number,
+  impact: Impact,
+  type: string,
+  improvement: string
+}
+
+export interface Suggestion{
+  fileName: string,
+  issues: Issue[]
+}
+
 const ResponseFormat = z.object({
   suggestions: z.array(
     z.object({
@@ -19,7 +35,7 @@ const ResponseFormat = z.object({
   ),
 });
 
-export async function getRepoSuggestions(promptFile: string) {
+export async function getRepoSuggestions(promptFile: string): Promise<Suggestion[]> {
   try {
     const openai = getOpenAIClient();
 
@@ -112,7 +128,7 @@ export async function getRepoSuggestions(promptFile: string) {
 }
 
 // This function sanitize the suggestions. This is to improve consistency of format and can be expanded on over time.
-const sanitizeSuggestions = (suggestionFile: any) => {
+const sanitizeSuggestions = (suggestionFile: any): Suggestion[] => {
   return suggestionFile.suggestions.map((file: any) => ({
     ...file,
     issues: file.issues.map((issue: any) => ({

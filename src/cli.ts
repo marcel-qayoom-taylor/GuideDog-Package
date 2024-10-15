@@ -9,6 +9,7 @@ import {
   applyAllSuggestions,
   applyFileSuggestions,
 } from './index';
+import { getSuggestions } from '@/utils/fix';
 
 const program = new Command();
 dotenv.config();
@@ -110,7 +111,7 @@ program
 
       if (scopeRes.scope === 'Specific file') {
         // Get the list of files with suggestions
-        const filesWithSuggestions = getAllFiles();
+        const filesWithSuggestions = await getSuggestions();
 
         // Prepare choices for the user
         const fileChoices = filesWithSuggestions.map((file) => ({
@@ -125,7 +126,7 @@ program
           choices: fileChoices,
         });
 
-        await applyFileSuggestions(fileRes.file.fileName);
+        await applyFileSuggestions(fileRes.file.fileName, filesWithSuggestions);
       } else {
         await applyAllSuggestions();
       }

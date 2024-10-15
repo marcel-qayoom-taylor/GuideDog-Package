@@ -4,7 +4,6 @@ import { RUNS_PATH, DIR_PATH } from './config';
 import * as fs from 'fs';
 
 export async function runCodeScan(): Promise<string[]> {
-  console.log('Scanning...');
   const _ignore = readIgnore();
   try {
     const patterns = [

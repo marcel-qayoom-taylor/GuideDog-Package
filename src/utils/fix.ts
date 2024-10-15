@@ -1,25 +1,13 @@
-import { getRepoSuggestions } from '@/helpers/ModelHandler';
+import { getRepoSuggestions, type Issue, type Suggestion } from '@/helpers/ModelHandler';
 import * as fs from 'fs';
 import * as path from 'path';
-import { createNewRun, DIR_PATH } from '@/helpers/config';
+import { createNewRun, DIR_PATH, RUNS_PATH } from '@/helpers/config';
 import { getPromptFiles, runCodeScan } from '@/helpers/CodeBaseScan';
 import { createfileLineBreakdown } from '@/helpers/FileLineBreakdown';
 
-interface Issue {
-  lineNumber: number;
-  impact: string;
-  type: string;
-  improvement: string;
-}
-
-interface FileIssue {
-  fileName: string;
-  issues: Issue[];
-}
-
 export const jsonPath = path.join(DIR_PATH, 'suggestions.json');
 
-const getSuggestions = async (): Promise<void> => {
+export const getSuggestions = async (): Promise<Suggestion[]> => {
   try {
     const filePaths = await runCodeScan();
     const { timestamp, newRunPath } = createNewRun();
@@ -28,19 +16,27 @@ const getSuggestions = async (): Promise<void> => {
 
     const promptFiles = await getPromptFiles(timestamp);
 
-    await getRepoSuggestions(promptFiles);
+    const suggestions = await getRepoSuggestions(promptFiles);
+
+    fs.writeFileSync(
+      `${RUNS_PATH}/run-${timestamp}/suggestions.json`,
+      JSON.stringify(suggestions, null, 2),
+      {
+        encoding: 'utf8',
+        flag: 'w',
+      },
+    );
+
+    return suggestions;
   } catch (error) {
     throw error;
   }
 };
 
 export async function applySuggestion(
-  fileIssue: FileIssue,
+  fileName: string,
   issue: Issue,
 ): Promise<void> {
-  await getSuggestions();
-
-  const { fileName } = fileIssue;
   const { lineNumber, improvement } = issue;
 
   const filePath = path.resolve(fileName);
@@ -68,31 +64,34 @@ export async function applySuggestion(
 }
 
 export async function applyAllSuggestions(): Promise<void> {
-  await getSuggestions();
+  const fileIssues = await getSuggestions();
 
-  const fileContent = fs.readFileSync(jsonPath, 'utf-8');
-  const fileIssues: FileIssue[] = JSON.parse(fileContent);
+  // const fileContent = fs.readFileSync(jsonPath, 'utf-8');
+  // const fileIssues: FileIssue[] = JSON.parse(fileContent);
 
-  fileIssues.forEach((fileIssue) => {
-    fileIssue.issues.forEach((issue) => {
-      applySuggestion(fileIssue, issue);
+  fileIssues.forEach((file) => {
+    const { fileName } = file;
+
+    file.issues.forEach((issue) => {
+      applySuggestion(fileName, issue);
     });
   });
 
   console.log('All suggestions have been applied across the repository.');
 }
 
-export async function applyFileSuggestions(fileName: string): Promise<void> {
-  await getSuggestions();
+export async function applyFileSuggestions(fileName: string, filesWithSuggestions: Suggestion[]): Promise<void> {
 
-  const fileContent = fs.readFileSync(jsonPath, 'utf-8');
-  const fileIssues: FileIssue[] = JSON.parse(fileContent);
+  // const fileContent = fs.readFileSync(jsonPath, 'utf-8');
+  // const fileIssues: FileIssue[] = JSON.parse(fileContent);
 
-  const fileIssue = fileIssues.find((issue) => issue.fileName === fileName);
+  const fileIssue = filesWithSuggestions.find((file) => file.fileName === fileName);
 
   if (fileIssue) {
+    const { fileName } = fileIssue;
+
     fileIssue.issues.forEach((issue) => {
-      applySuggestion(fileIssue, issue);
+      applySuggestion(fileName, issue);
     });
 
     console.log(`All issues for file ${fileIssue.fileName} have been applied.`);
@@ -103,7 +102,7 @@ export async function applyFileSuggestions(fileName: string): Promise<void> {
 
 export function getAllFiles(): { filePath: string; fileName: string }[] {
   const fileContent = fs.readFileSync(jsonPath, 'utf-8');
-  const fileIssues: FileIssue[] = JSON.parse(fileContent);
+  const fileIssues: Suggestion[] = JSON.parse(fileContent);
 
   const response = fileIssues.map((fileIssue) => ({
     filePath: path.resolve(fileIssue.fileName),
