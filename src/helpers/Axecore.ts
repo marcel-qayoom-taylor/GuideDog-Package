@@ -1,8 +1,6 @@
 import { AxePuppeteer } from '@axe-core/puppeteer';
 import puppeteer from 'puppeteer';
 import { exec } from 'child_process';
-import path from 'path';
-import * as fs from 'fs';
 
 const retry = async (
   url: string,
@@ -72,15 +70,11 @@ const stopProcess = (runningProcess: any) => {
 };
 
 export const analyse = async (
-  framework: string | undefined,
-  runPath: string,
-  timestamp: string,
+  framework: string,
 ) => {
   let serveProcess;
 
   try {
-    if (!framework) throw new Error('guidedog.config.cjs cannot be found');
-
     switch (framework) {
       case 'React':
         await build('npm run build');
@@ -129,7 +123,6 @@ export const analyse = async (
 
     // Optionally weight the score
     const weightedScore = 500 + parseFloat(rawScore) * 500.0;
-    console.log(`minor: ${p0} | moderate: ${p1} | critical: ${p2}`);
     console.log(`Raw score: ${rawScore} | Weighted score: ${weightedScore}`);
 
     const score = {
@@ -140,23 +133,9 @@ export const analyse = async (
       minor: p0,
     };
 
-    const axeResults = {
-      testEngine: results.testEngine,
-      testEnvironment: results.testEnvironment,
-      timeStamp: results.timestamp,
-      url: results.url,
-      violation: results.violations,
-    };
-
     await browser.close();
 
-    fs.writeFileSync(
-      path.join(runPath, `axecore-${timestamp}.json`),
-      JSON.stringify(axeResults, null, 2),
-      'utf8',
-    );
-
-    return { score, axeResults };
+    return { score };
   } catch (error) {
     throw error;
   } finally {

@@ -20,8 +20,12 @@ export async function check(flag?: string) {
 
     const { timestamp, newRunPath } = createNewRun();
 
+    if (!_config.framework) {
+      throw new Error('guidedog.config.cjs cannot be found');
+    }
+
     // analyse to get axe-core score and violations
-    const results = await analyse(_config?.framework, newRunPath, timestamp);
+    const results = await analyse(_config.framework);
 
     const filePaths = await runCodeScan();
 

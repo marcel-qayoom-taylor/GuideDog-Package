@@ -29,34 +29,21 @@ export async function runCodeScan(): Promise<string[]> {
 
 export async function getPromptFiles(
   timestamp: string,
-): Promise<{ [key: string]: string }> {
+): Promise<string> {
   try {
     const patterns = [
-      `${DIR_PATH}/wcag.json`,
       `${RUNS_PATH}/run-${timestamp}/*`,
     ];
 
     const filePaths = await glob(patterns);
 
-    if (filePaths.length <= 1) {
+    if (!filePaths[0]) {
       throw new Error('Missing uploading files!');
     }
 
-    const promptFiles: { [key: string]: string } = {};
+    const files_data = fs.readFileSync(filePaths[0], 'utf-8');
 
-    filePaths.forEach((path) => {
-      const content = fs.readFileSync(path, 'utf-8');
-
-      if (path.includes('files')) {
-        promptFiles['files_data'] = content;
-      } else if (path.includes('axecore')) {
-        promptFiles['axecore_data'] = content;
-      } else {
-        promptFiles['wcag_data'] = content;
-      }
-    });
-
-    return promptFiles;
+    return files_data;
   } catch (error) {
     throw error;
   }
