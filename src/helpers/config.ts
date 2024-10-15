@@ -2,7 +2,7 @@ import { OpenAI } from 'openai';
 import * as fs from 'fs';
 import path from 'path';
 import _ from 'lodash';
-import { pathToFileURL } from 'url';  // Add this import
+import { pathToFileURL } from 'url'; // Add this import
 
 interface IConfig {
   framework?: string;
@@ -44,7 +44,8 @@ export async function initConfig(_config: IConfig) {
 
 export const getConfig = async (): Promise<IConfig> => {
   try {
-    const _config: IConfig = (await import(pathToFileURL(CONFIG_PATH).href)).default;  // Updated
+    const _config: IConfig = (await import(pathToFileURL(CONFIG_PATH).href))
+      .default; // Updated
 
     if (!_config) {
       throw new Error('Configuration file can not be found');

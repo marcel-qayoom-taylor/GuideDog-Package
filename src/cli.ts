@@ -4,7 +4,13 @@ import inquirer from 'inquirer';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import path from 'path';
-import { init, check, getAllFiles,applyAllSuggestions ,applyFileSuggestions} from './index';
+import {
+  init,
+  check,
+  getAllFiles,
+  applyAllSuggestions,
+  applyFileSuggestions,
+} from './index';
 import { DIR_PATH } from './helpers/config';
 
 const program = new Command();
@@ -111,18 +117,18 @@ program
         const filesWithSuggestions = getAllFiles();
 
         // Prepare choices for the user
-        const fileChoices = filesWithSuggestions.map(file => ({
+        const fileChoices = filesWithSuggestions.map((file) => ({
           name: file.fileName,
           value: file,
         }));
 
         const fileRes = await inquirer.prompt({
-          type: 'list', 
+          type: 'list',
           name: 'file',
           message: 'Select a file to fix:',
           choices: fileChoices,
         });
-        
+
         await applyFileSuggestions(fileRes.file.fileName);
       } else {
         await applyAllSuggestions();
