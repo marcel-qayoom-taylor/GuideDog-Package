@@ -27,13 +27,9 @@ export async function runCodeScan(): Promise<string[]> {
   }
 }
 
-export async function getPromptFiles(
-  timestamp: string,
-): Promise<string> {
+export async function getPromptFiles(timestamp: string): Promise<string> {
   try {
-    const patterns = [
-      `${RUNS_PATH}/run-${timestamp}/*`,
-    ];
+    const patterns = [`${RUNS_PATH}/run-${timestamp}/*`];
 
     const filePaths = await glob(patterns);
 

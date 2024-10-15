@@ -69,9 +69,7 @@ const stopProcess = (runningProcess: any) => {
   }
 };
 
-export const analyse = async (
-  framework: string,
-) => {
+export const analyse = async (framework: string) => {
   let serveProcess;
 
   try {
