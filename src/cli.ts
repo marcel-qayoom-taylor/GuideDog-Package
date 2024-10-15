@@ -87,7 +87,7 @@ program
       console.log('Ctrl + C to exit.');
     } catch (error) {
       program.error(`❌Error during checking:\n${error}`);
-      console.log('Ctrl + C to exit.');
+      process.exit(0);
     }
   });
 
