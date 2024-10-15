@@ -17,27 +17,27 @@ interface FileIssue {
   issues: Issue[];
 }
 
-export const jsonPath = path.join(
-  DIR_PATH,
-  'suggestions.json',
-);
+export const jsonPath = path.join(DIR_PATH, 'suggestions.json');
 
 const getSuggestions = async (): Promise<void> => {
   try {
     const filePaths = await runCodeScan();
     const { timestamp, newRunPath } = createNewRun();
-  
+
     createfileLineBreakdown(filePaths, newRunPath, timestamp);
-  
+
     const promptFiles = await getPromptFiles(timestamp);
-  
+
     await getRepoSuggestions(promptFiles);
   } catch (error) {
     throw error;
   }
-}
+};
 
-export async function applySuggestion(fileIssue: FileIssue, issue: Issue): Promise<void> {
+export async function applySuggestion(
+  fileIssue: FileIssue,
+  issue: Issue,
+): Promise<void> {
   await getSuggestions();
 
   const { fileName } = fileIssue;
