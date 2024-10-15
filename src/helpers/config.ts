@@ -2,7 +2,6 @@ import { OpenAI } from 'openai';
 import * as fs from 'fs';
 import path from 'path';
 import _ from 'lodash';
-import wcag from '@/data/wcag.json';
 import { pathToFileURL } from 'url';  // Add this import
 
 interface IConfig {
@@ -15,7 +14,6 @@ interface IConfig {
 export const DIR_PATH = path.join(process.cwd(), '.guidedog');
 export const CONFIG_PATH = path.join(DIR_PATH, 'guidedog.config.cjs');
 export const RUNS_PATH = path.join(DIR_PATH, 'runs');
-export let LATEST_RUN_PATH = '';
 
 export async function initConfig(_config: IConfig) {
   try {
@@ -39,10 +37,6 @@ export async function initConfig(_config: IConfig) {
         { encoding: 'utf-8' },
       );
     }
-
-    fs.writeFileSync(path.join(DIR_PATH, 'wcag.json'), JSON.stringify(wcag), {
-      encoding: 'utf-8',
-    });
   } catch (error) {
     throw error;
   }
@@ -105,8 +99,6 @@ export function createNewRun() {
         'Run path already exists for this exact time. Returning existing run path.',
       );
     }
-
-    LATEST_RUN_PATH = newRunPath;
 
     return { timestamp, newRunPath };
   } catch (error) {
