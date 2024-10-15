@@ -2,8 +2,6 @@
 import { Command } from 'commander';
 import inquirer from 'inquirer';
 import * as dotenv from 'dotenv';
-import * as fs from 'fs';
-import path from 'path';
 import {
   init,
   check,
@@ -11,7 +9,6 @@ import {
   applyAllSuggestions,
   applyFileSuggestions,
 } from './index';
-import { DIR_PATH } from './helpers/config';
 
 const program = new Command();
 dotenv.config();
@@ -97,7 +94,6 @@ program
     }
   });
 
-// TODO: Add option for fixFile
 program
   .command('fix')
   .description('Fix accessibility issues')

@@ -1,8 +1,9 @@
 import { getRepoSuggestions } from '@/helpers/ModelHandler';
-import * as dotenv from 'dotenv';
 import * as fs from 'fs';
-import { json } from 'node:stream/consumers';
 import * as path from 'path';
+import { createNewRun, DIR_PATH } from '@/helpers/config';
+import { getPromptFiles, runCodeScan } from '@/helpers/CodeBaseScan';
+import { createfileLineBreakdown } from '@/helpers/FileLineBreakdown';
 
 interface Issue {
   lineNumber: number;
@@ -17,16 +18,28 @@ interface FileIssue {
 }
 
 export const jsonPath = path.join(
-  process.cwd(),
-  '.guidedog',
+  DIR_PATH,
   'suggestions.json',
 );
 
-export async function fixFile(dir: string) {
-  console.log(`fix specific file at [${dir}]`);
+const getSuggestions = async (): Promise<void> => {
+  try {
+    const filePaths = await runCodeScan();
+    const { timestamp, newRunPath } = createNewRun();
+  
+    createfileLineBreakdown(filePaths, newRunPath, timestamp);
+  
+    const promptFiles = await getPromptFiles(timestamp);
+  
+    await getRepoSuggestions(promptFiles);
+  } catch (error) {
+    throw error;
+  }
 }
 
-export function applySuggestion(fileIssue: FileIssue, issue: Issue): void {
+export async function applySuggestion(fileIssue: FileIssue, issue: Issue): Promise<void> {
+  await getSuggestions();
+
   const { fileName } = fileIssue;
   const { lineNumber, improvement } = issue;
 
@@ -55,6 +68,8 @@ export function applySuggestion(fileIssue: FileIssue, issue: Issue): void {
 }
 
 export async function applyAllSuggestions(): Promise<void> {
+  await getSuggestions();
+
   const fileContent = fs.readFileSync(jsonPath, 'utf-8');
   const fileIssues: FileIssue[] = JSON.parse(fileContent);
 
@@ -68,6 +83,8 @@ export async function applyAllSuggestions(): Promise<void> {
 }
 
 export async function applyFileSuggestions(fileName: string): Promise<void> {
+  await getSuggestions();
+
   const fileContent = fs.readFileSync(jsonPath, 'utf-8');
   const fileIssues: FileIssue[] = JSON.parse(fileContent);
 
