@@ -25,7 +25,7 @@ export async function check(flag?: string) {
     }
 
     // analyse to get axe-core score and violations
-    const results = await analyse(_config.framework);
+    // const results = await analyse(_config.framework);
 
     const filePaths = await runCodeScan();
 
@@ -39,9 +39,9 @@ export async function check(flag?: string) {
 
     const suggestions = await getRepoSuggestions(promptFiles);
 
-    if (flag === 'score') {
-      return results.score;
-    }
+    // if (flag === 'score') {
+    //   return results.score;
+    // }
 
     if (flag === 'report') {
       // Write suggestions to guidedog folder

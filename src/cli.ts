@@ -21,31 +21,21 @@ program
   )
   .version('1.0.0');
 
-program
+  program
   .command('init')
   .description('Initialize the accessibility config for the repo')
-  .action(async () => {
+  .option('--apiKey <key>', 'OpenAI API key')
+  .action(async (options) => {
     console.log('Starting init...');
     try {
-      let apiKey: string = process.env.OPENAI_API_KEY || '';
+      let apiKey: string = options.apiKey || process.env.OPENAI_API_KEY || '';
 
       if (apiKey) {
-        console.log('OpenAI API key found in environment variables');
-
-        const useExistingKeyResponse = await inquirer.prompt({
-          type: 'confirm',
-          name: 'useExistingKey',
-          message: 'Do you want to use the existing API key?',
-          default: true,
-        });
-
-        if (!useExistingKeyResponse.useExistingKey) {
-          apiKey = ''; // clear api key so it triggers the next input prompt
-        }
+        console.log('OpenAI API key provided via flag or found in environment variables');
       }
 
       if (!apiKey) {
-        console.log('OpenAI API key not found in environment variables');
+        console.log('OpenAI API key not found in environment variables or provided as a flag');
         const apiKeyResponse = await inquirer.prompt({
           type: 'input',
           name: 'apiKey',
@@ -98,36 +88,55 @@ program
 program
   .command('fix')
   .description('Fix accessibility issues')
-  .action(async () => {
+  .option('--wholeRepo', 'Fix the whole repository')
+  .option('--file <fileName>', 'Fix a specific file')
+  .action(async (options) => {
     console.log('Starting fix...');
-
+    
     try {
+      let latestsuggestions = await getLatestSuggestion() || await getSuggestions();
+
+
+      // Check if the --wholeRepo flag is provided
+      if (options.wholeRepo) {
+        console.log("wholeRepo flag found, fixing the whole repository...");
+        await applyAllSuggestions(latestsuggestions);
+        console.log('✅ Fix completed!');
+        return;
+      }
+
+      // Check if the --file flag is provided
+      if (options.file) {
+        console.log(`File flag found, fixing the file: ${options.file}`);
+        await applyFileSuggestions(options.file, latestsuggestions);
+        console.log('✅ Fix completed!');
+        return;
+      }
+
       const scopeRes = await inquirer.prompt({
         type: 'list',
         name: 'scope',
         message: 'Do you want to fix the whole repository or a specific file?',
         choices: ['Whole repo', 'Specific file'],
       });
-      let latestsuggestions = await getLatestSuggestion();
 
-      if (!latestsuggestions) latestsuggestions = await getSuggestions();
 
       if (scopeRes.scope === 'Specific file') {
         // Prepare choices for the user
-        const fileChoices = latestsuggestions.map((file) => ({
-          name: file.fileName,
-          value: file,
-        }));
-
-        const fileRes = await inquirer.prompt({
-          type: 'list',
-          name: 'file',
-          message: 'Select a file to fix:',
-          choices: fileChoices,
-        });
-
-        await applyFileSuggestions(fileRes.file.fileName, latestsuggestions);
-      } else {
+          const fileChoices = latestsuggestions.map((file) => ({
+            name: file.fileName,
+            value: file,
+          }));
+  
+          const fileRes = await inquirer.prompt({
+            type: 'list',
+            name: 'file',
+            message: 'Select a file to fix:',
+            choices: fileChoices,
+          });
+          await applyFileSuggestions(fileRes.file.fileName, latestsuggestions);
+        }
+      else {
         await applyAllSuggestions(latestsuggestions);
       }
 
