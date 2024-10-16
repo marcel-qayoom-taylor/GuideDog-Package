@@ -109,12 +109,10 @@ program
         choices: ['Whole repo', 'Specific file'],
       });
       let latestsuggestions = await getLatestSuggestion();
-      console.log(1, latestsuggestions)
-      if (!latestsuggestions)
-        latestsuggestions = await getSuggestions();
-      
-      if (scopeRes.scope === 'Specific file') {
+      console.log(1, latestsuggestions);
+      if (!latestsuggestions) latestsuggestions = await getSuggestions();
 
+      if (scopeRes.scope === 'Specific file') {
         // Prepare choices for the user
         const fileChoices = latestsuggestions.map((file) => ({
           name: file.fileName,

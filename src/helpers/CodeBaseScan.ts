@@ -48,7 +48,7 @@ export async function getPromptFiles(timestamp: string): Promise<string> {
 
 export const getLatestSuggestion = async (): Promise<Suggestion[] | null> => {
   try {
-    const patterns = [`${RUNS_PATH}/run-*/suggestions.json`]
+    const patterns = [`${RUNS_PATH}/run-*/suggestions.json`];
 
     const suggetionsPaths = await glob(patterns);
     console.log(suggetionsPaths);
@@ -60,26 +60,25 @@ export const getLatestSuggestion = async (): Promise<Suggestion[] | null> => {
       })
       .pop();
 
-    if (!latestSuggestionsPath)
-      return null;
+    if (!latestSuggestionsPath) return null;
 
     const fileContent = fs.readFileSync(latestSuggestionsPath, 'utf-8');
 
-    const latestSuggestions:Suggestion[] = JSON.parse(fileContent);
+    const latestSuggestions: Suggestion[] = JSON.parse(fileContent);
     console.log(latestSuggestionsPath);
     return latestSuggestions;
   } catch (error) {
     throw error;
   }
-}
+};
 
 // Helper function to extract and parse ISO 8601 timestamp from the file path
 const extractTimestampFromPath = (filePath: string): Date => {
   const match = filePath.split('/').slice(-2, -1)[0]; // Get 'run-{timestamp}' part
-  if (!match)
-    throw new Error(`Invalid path: ${filePath}`);
+  if (!match) throw new Error(`Invalid path: ${filePath}`);
   const timestampStr = match.split('run-')[1]; // Extract timestamp part
-  if (!timestampStr)
-    throw new Error(`Invalid path: ${filePath}`);
-  return new Date(timestampStr.replace(/-/g, ':').replace('T', ' ').replace('Z', ''));
+  if (!timestampStr) throw new Error(`Invalid path: ${filePath}`);
+  return new Date(
+    timestampStr.replace(/-/g, ':').replace('T', ' ').replace('Z', ''),
+  );
 };
