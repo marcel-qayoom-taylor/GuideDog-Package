@@ -14,7 +14,7 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-export async function check(flag?: string) {
+export async function check() {
   try {
     const _config = await getConfig();
 
@@ -42,27 +42,25 @@ export async function check(flag?: string) {
     //   return results.score;
     // }
 
-    if (flag === 'report') {
-      // Write suggestions to guidedog folder
-      fs.writeFileSync(
-        `${DIR_PATH}/suggestions.json`,
-        JSON.stringify(suggestions, null, 2),
-        {
-          encoding: 'utf8',
-          flag: 'w',
-        },
-      );
+    // Write suggestions to guidedog folder
+    fs.writeFileSync(
+      `${DIR_PATH}/suggestions.json`,
+      JSON.stringify(suggestions, null, 2),
+      {
+        encoding: 'utf8',
+        flag: 'w',
+      },
+    );
 
-      // Write suggestions to latest run for historical purposes
-      fs.writeFileSync(
-        `${LATEST_RUN_PATH}/suggestions.json`,
-        JSON.stringify(suggestions, null, 2),
-        {
-          encoding: 'utf8',
-          flag: 'w',
-        },
-      );
-    }
+    // Write suggestions to latest run for historical purposes
+    fs.writeFileSync(
+      `${LATEST_RUN_PATH}/suggestions.json`,
+      JSON.stringify(suggestions, null, 2),
+      {
+        encoding: 'utf8',
+        flag: 'w',
+      },
+    );
 
     return suggestions;
   } catch (error) {
