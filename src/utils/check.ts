@@ -38,10 +38,11 @@ export async function check() {
     console.log('Getting suggestions...');
     const suggestions = await getRepoSuggestions(fileLineBreakdownPath);
 
-    // if (flag === 'score') {
-    //   return results.score;
-    // }
+    if (flag === 'score') {
+      return results.score;
+    }
 
+<<<<<<< HEAD
     // Write suggestions to guidedog folder
     fs.writeFileSync(
       `${DIR_PATH}/suggestions.json`,

@@ -2,10 +2,14 @@
 import { Command } from 'commander';
 import inquirer from 'inquirer';
 import * as dotenv from 'dotenv';
-import * as fs from 'fs';
-import path from 'path';
-import { init, check, fixFile, fixRepo } from './index';
-import { DIR_PATH } from './helpers/config';
+import {
+  init,
+  check,
+  applyAllSuggestions,
+  applyFileSuggestions,
+} from './index';
+import { getSuggestions } from '@/utils/fix';
+import { getLatestSuggestion } from './helpers/CodeBaseScan';
 
 const program = new Command();
 dotenv.config();
@@ -80,11 +84,10 @@ program
       console.log('Ctrl + C to exit.');
     } catch (error) {
       program.error(`❌Error during checking:\n${error}`);
-      console.log('Ctrl + C to exit.');
+      process.exit(0);
     }
   });
 
-// TODO: Add option for fixFile
 program
   .command('fix')
   .description('Fix accessibility issues')
@@ -98,27 +101,27 @@ program
         message: 'Do you want to fix the whole repository or a specific file?',
         choices: ['Whole repo', 'Specific file'],
       });
+      let latestsuggestions = await getLatestSuggestion();
 
-      if (scopeRes.scope == 'Specific file') {
+      if (!latestsuggestions) latestsuggestions = await getSuggestions();
+
+      if (scopeRes.scope === 'Specific file') {
+        // Prepare choices for the user
+        const fileChoices = latestsuggestions.map((file) => ({
+          name: file.fileName,
+          value: file,
+        }));
+
         const fileRes = await inquirer.prompt({
-          type: 'input',
-          name: 'filePath',
-          message: 'Enter your OpenAI API key:',
-          validate: async (input) => {
-            const file = path.join(DIR_PATH, input);
-
-            if (fs.existsSync(file)) {
-              return input.length > 0 || 'File path cannot be empty';
-            }
-
-            return 'File does not exist';
-          },
+          type: 'list',
+          name: 'file',
+          message: 'Select a file to fix:',
+          choices: fileChoices,
         });
 
-        const file = path.join(DIR_PATH, fileRes.filePath);
-        fixFile(file);
+        await applyFileSuggestions(fileRes.file.fileName, latestsuggestions);
       } else {
-        fixRepo();
+        await applyAllSuggestions(latestsuggestions);
       }
 
       console.log('✅ Fix completed!');
