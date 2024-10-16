@@ -1,6 +1,8 @@
 import { AxePuppeteer } from '@axe-core/puppeteer';
 import puppeteer from 'puppeteer';
 import { exec } from 'child_process';
+import path from 'path';
+import * as fs from 'fs';
 
 const retry = async (
   url: string,
@@ -24,7 +26,9 @@ const retry = async (
         );
       }
     } catch (error) {
-      throw new Error(`Serving attempt ${attempt + 1} failed: ${error}.`);
+      throw new Error(
+        `Serving attempt ${attempt + 1} failed: ${error}. Retrying...`,
+      );
     }
   }
 
@@ -69,10 +73,16 @@ const stopProcess = (runningProcess: any) => {
   }
 };
 
-export const analyse = async (framework: string) => {
+export const analyse = async (
+  framework: string | undefined,
+  runPath: string,
+  timestamp: string,
+) => {
   let serveProcess;
 
   try {
+    if (!framework) throw new Error('guidedog.config.cjs cannot be found');
+
     switch (framework) {
       case 'React':
         await build('npm run build');
@@ -121,6 +131,7 @@ export const analyse = async (framework: string) => {
 
     // Optionally weight the score
     const weightedScore = 500 + parseFloat(rawScore) * 500.0;
+    console.log(`minor: ${p0} | moderate: ${p1} | critical: ${p2}`);
     console.log(`Raw score: ${rawScore} | Weighted score: ${weightedScore}`);
 
     const score = {
@@ -131,9 +142,23 @@ export const analyse = async (framework: string) => {
       minor: p0,
     };
 
+    const axeResults = {
+      testEngine: results.testEngine,
+      testEnvironment: results.testEnvironment,
+      timeStamp: results.timestamp,
+      url: results.url,
+      violation: results.violations,
+    };
+
     await browser.close();
 
-    return { score };
+    fs.writeFileSync(
+      path.join(runPath, `axecore-${timestamp}.json`),
+      JSON.stringify(axeResults, null, 2),
+      'utf8',
+    );
+
+    return { score, axeResults };
   } catch (error) {
     throw error;
   } finally {

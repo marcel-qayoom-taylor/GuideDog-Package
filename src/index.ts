@@ -1,5 +1,5 @@
 import { init } from '@/utils/init';
 import { check } from '@/utils/check';
-import { applyAllSuggestions, applyFileSuggestions } from '@/utils/fix';
+import { fixFile, fixRepo } from '@/utils/fix';
 
-export { init, check, applyAllSuggestions, applyFileSuggestions };
+export { init, check, fixFile, fixRepo };
