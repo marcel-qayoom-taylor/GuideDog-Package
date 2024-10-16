@@ -1,4 +1,8 @@
-import { getRepoSuggestions, type Issue, type Suggestion } from '@/helpers/ModelHandler';
+import {
+  getRepoSuggestions,
+  type Issue,
+  type Suggestion,
+} from '@/helpers/ModelHandler';
 import * as fs from 'fs';
 import * as path from 'path';
 import { createNewRun, DIR_PATH, RUNS_PATH } from '@/helpers/config';
@@ -63,13 +67,13 @@ export async function applySuggestion(
   console.log(`Updated line ${lineNumber} in ${fileName}`);
 }
 
-export async function applyAllSuggestions(): Promise<void> {
-  const fileIssues = await getSuggestions();
-
+export async function applyAllSuggestions(
+  latestSuggestions: Suggestion[],
+): Promise<void> {
   // const fileContent = fs.readFileSync(jsonPath, 'utf-8');
   // const fileIssues: FileIssue[] = JSON.parse(fileContent);
 
-  fileIssues.forEach((file) => {
+  latestSuggestions.forEach((file) => {
     const { fileName } = file;
 
     file.issues.forEach((issue) => {
@@ -80,12 +84,16 @@ export async function applyAllSuggestions(): Promise<void> {
   console.log('All suggestions have been applied across the repository.');
 }
 
-export async function applyFileSuggestions(fileName: string, filesWithSuggestions: Suggestion[]): Promise<void> {
-
+export async function applyFileSuggestions(
+  fileName: string,
+  filesWithSuggestions: Suggestion[],
+): Promise<void> {
   // const fileContent = fs.readFileSync(jsonPath, 'utf-8');
   // const fileIssues: FileIssue[] = JSON.parse(fileContent);
 
-  const fileIssue = filesWithSuggestions.find((file) => file.fileName === fileName);
+  const fileIssue = filesWithSuggestions.find(
+    (file) => file.fileName === fileName,
+  );
 
   if (fileIssue) {
     const { fileName } = fileIssue;
@@ -98,16 +106,4 @@ export async function applyFileSuggestions(fileName: string, filesWithSuggestion
   } else {
     console.error(`File with name ${fileName} not found in the JSON data.`);
   }
-}
-
-export function getAllFiles(): { filePath: string; fileName: string }[] {
-  const fileContent = fs.readFileSync(jsonPath, 'utf-8');
-  const fileIssues: Suggestion[] = JSON.parse(fileContent);
-
-  const response = fileIssues.map((fileIssue) => ({
-    filePath: path.resolve(fileIssue.fileName),
-    fileName: fileIssue.fileName,
-  }));
-
-  return response;
 }

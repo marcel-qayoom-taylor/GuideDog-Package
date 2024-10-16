@@ -5,11 +5,11 @@ import * as dotenv from 'dotenv';
 import {
   init,
   check,
-  getAllFiles,
   applyAllSuggestions,
   applyFileSuggestions,
 } from './index';
 import { getSuggestions } from '@/utils/fix';
+import { getLatestSuggestion } from './helpers/CodeBaseScan';
 
 const program = new Command();
 dotenv.config();
@@ -108,13 +108,13 @@ program
         message: 'Do you want to fix the whole repository or a specific file?',
         choices: ['Whole repo', 'Specific file'],
       });
+      let latestsuggestions = await getLatestSuggestion();
+
+      if (!latestsuggestions) latestsuggestions = await getSuggestions();
 
       if (scopeRes.scope === 'Specific file') {
-        // Get the list of files with suggestions
-        const filesWithSuggestions = await getSuggestions();
-
         // Prepare choices for the user
-        const fileChoices = filesWithSuggestions.map((file) => ({
+        const fileChoices = latestsuggestions.map((file) => ({
           name: file.fileName,
           value: file,
         }));
@@ -126,9 +126,9 @@ program
           choices: fileChoices,
         });
 
-        await applyFileSuggestions(fileRes.file.fileName, filesWithSuggestions);
+        await applyFileSuggestions(fileRes.file.fileName, latestsuggestions);
       } else {
-        await applyAllSuggestions();
+        await applyAllSuggestions(latestsuggestions);
       }
 
       console.log('✅ Fix completed!');

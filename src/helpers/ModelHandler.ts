@@ -4,19 +4,22 @@ import { zodResponseFormat } from 'openai/helpers/zod.mjs';
 import wcag_data from '@/data/wcag.json';
 
 enum Impact {
-  'critical', 'serious', 'moderate', 'minor'
+  'critical',
+  'serious',
+  'moderate',
+  'minor',
 }
 
 export interface Issue {
-  lineNumber: number,
-  impact: Impact,
-  type: string,
-  improvement: string
+  lineNumber: number;
+  impact: Impact;
+  type: string;
+  improvement: string;
 }
 
-export interface Suggestion{
-  fileName: string,
-  issues: Issue[]
+export interface Suggestion {
+  fileName: string;
+  issues: Issue[];
 }
 
 const ResponseFormat = z.object({
@@ -35,7 +38,9 @@ const ResponseFormat = z.object({
   ),
 });
 
-export async function getRepoSuggestions(promptFile: string): Promise<Suggestion[]> {
+export async function getRepoSuggestions(
+  promptFile: string,
+): Promise<Suggestion[]> {
   try {
     const openai = getOpenAIClient();
 
