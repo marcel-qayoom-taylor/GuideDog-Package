@@ -62,6 +62,7 @@ export async function getRepoSuggestions(
           1. Read through the upcoming json file and identify accessibility issues according to WCAG 2.2 guidelines.
             - Contextualize your analysis by reviewing the entire file, considering how different elements interact and how they might affect accessibility.
             - Ignore file if it's some kind of configuration files or custom hooks.
+            - For the file name, use the exact name of the file as provided in the input data. 
           2. Provide solutions based on the issues identified, suggest accurate code improvements.
             - Locate the issue: Each issue must have a valid line number.
             - Resolve the issue: Provide one single solution per issue.
@@ -72,6 +73,7 @@ export async function getRepoSuggestions(
             - The suggestion should be the exact code and nothing else. The code provided is going to replace the whole exact line of the identified issue. So please ensure you provide the exact code that can replace the line without causing any errors.
             - For any quotes required in the suggestion please use single quotes. Do not try to use escape characters as this breaks the response for us. 
             - For the type of issue, use the exact title of the issue as per the WCAG 2.2 guidelines.
+            - For the impact of the issue. Deeply assess the impact of the issue on the accessibility of the website. The impact should be one of the following: critical, serious, moderate, minor.
           3. Before returning the suggestions, validate the suggestions and modify them accordingly if not pass any of these validation criteria:
             - Validate that the suggestions consider the surrounding code context. This includes ensuring that conditional rendering, variable states, and the overall structure of the component or file are taken into account.
             - Suggestions should not introduce new bugs or alter the intended behavior of the application.
