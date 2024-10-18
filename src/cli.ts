@@ -21,7 +21,7 @@ program
   )
   .version('1.0.0');
 
-  program
+program
   .command('init')
   .description('Initialize the accessibility config for the repo')
   .option('--apiKey <key>', 'OpenAI API key')
@@ -31,11 +31,15 @@ program
       let apiKey: string = options.apiKey || process.env.OPENAI_API_KEY || '';
 
       if (apiKey) {
-        console.log('OpenAI API key provided via flag or found in environment variables');
+        console.log(
+          'OpenAI API key provided via flag or found in environment variables',
+        );
       }
 
       if (!apiKey) {
-        console.log('OpenAI API key not found in environment variables or provided as a flag');
+        console.log(
+          'OpenAI API key not found in environment variables or provided as a flag',
+        );
         const apiKeyResponse = await inquirer.prompt({
           type: 'input',
           name: 'apiKey',
@@ -92,14 +96,14 @@ program
   .option('--file <fileName>', 'Fix a specific file')
   .action(async (options) => {
     console.log('Starting fix...');
-    
-    try {
-      let latestsuggestions = await getLatestSuggestion() || await getSuggestions();
 
+    try {
+      let latestsuggestions =
+        (await getLatestSuggestion()) || (await getSuggestions());
 
       // Check if the --wholeRepo flag is provided
       if (options.wholeRepo) {
-        console.log("wholeRepo flag found, fixing the whole repository...");
+        console.log('wholeRepo flag found, fixing the whole repository...');
         await applyAllSuggestions(latestsuggestions);
         console.log('✅ Fix completed!');
         return;
@@ -120,23 +124,21 @@ program
         choices: ['Whole repo', 'Specific file'],
       });
 
-
       if (scopeRes.scope === 'Specific file') {
         // Prepare choices for the user
-          const fileChoices = latestsuggestions.map((file) => ({
-            name: file.fileName,
-            value: file,
-          }));
-  
-          const fileRes = await inquirer.prompt({
-            type: 'list',
-            name: 'file',
-            message: 'Select a file to fix:',
-            choices: fileChoices,
-          });
-          await applyFileSuggestions(fileRes.file.fileName, latestsuggestions);
-        }
-      else {
+        const fileChoices = latestsuggestions.map((file) => ({
+          name: file.fileName,
+          value: file,
+        }));
+
+        const fileRes = await inquirer.prompt({
+          type: 'list',
+          name: 'file',
+          message: 'Select a file to fix:',
+          choices: fileChoices,
+        });
+        await applyFileSuggestions(fileRes.file.fileName, latestsuggestions);
+      } else {
         await applyAllSuggestions(latestsuggestions);
       }
 
