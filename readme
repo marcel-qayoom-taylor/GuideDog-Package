@@ -38,8 +38,6 @@ guidedog check [options]
 
 Check the accessibility of your project, receive an rating and suggestions.
 
-- `--report`: Generate a detailed accessibility report.
-
 ```bash
 guidedog fix
 ```

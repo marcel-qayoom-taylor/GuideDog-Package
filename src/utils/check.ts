@@ -43,17 +43,15 @@ export async function check(flag?: string) {
     //   return results.score;
     // }
 
-    if (flag === 'report') {
-      // Write suggestions to guidedog folder
-      fs.writeFileSync(
-        `${DIR_PATH}/suggestions.json`,
-        JSON.stringify(suggestions, null, 2),
-        {
-          encoding: 'utf8',
-          flag: 'w',
-        },
-      );
-    }
+    // Write suggestions to guidedog folder
+    fs.writeFileSync(
+      `${DIR_PATH}/suggestions.json`,
+      JSON.stringify(suggestions, null, 2),
+      {
+        encoding: 'utf8',
+        flag: 'w',
+      },
+    );
 
     // Write suggestions to latest run for historical purposes
     fs.writeFileSync(

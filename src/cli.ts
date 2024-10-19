@@ -67,15 +67,12 @@ program
 program
   .command('check')
   .description('Check accessibility of your project')
-  .option('-r, --report', 'Generate a detailed accessibility report')
   .option('-s, --score', 'Assess accessibility score')
   .action(async (options) => {
     try {
       console.log('Starting check...');
 
-      if (options.report) {
-        await check('report');
-      } else if (options.score) {
+      if (options.score) {
         await check('score');
       } else {
         await check();
