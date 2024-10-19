@@ -38,14 +38,10 @@ export async function check(flag?: string) {
       },
     );
 
-    fs.writeFileSync(
-      `${DIR_PATH}/score.json`,
-      JSON.stringify(score, null, 2),
-      {
-        encoding: 'utf8',
-        flag: 'w',
-      },
-    );
+    fs.writeFileSync(`${DIR_PATH}/score.json`, JSON.stringify(score, null, 2), {
+      encoding: 'utf8',
+      flag: 'w',
+    });
 
     // Write suggestions to latest run for historical purposes
     fs.writeFileSync(
