@@ -1,9 +1,10 @@
 import * as fs from 'fs';
-import { getConfig, DIR_PATH, createNewRun, RUNS_PATH } from '@/helpers/config';
+import { DIR_PATH, createNewRun, RUNS_PATH } from '@/helpers/config';
 import { getPromptFiles, runCodeScan } from '@/helpers/CodeBaseScan';
 import { createfileLineBreakdown } from '@/helpers/FileLineBreakdown';
 import { getRepoSuggestions } from '@/helpers/ModelHandler';
 import * as dotenv from 'dotenv';
+import { calculate } from '@/helpers/calculateScore';
 
 dotenv.config();
 
@@ -25,9 +26,7 @@ export async function check(flag?: string) {
 
     const suggestions = await getRepoSuggestions(promptFiles);
 
-    // if (flag === 'score') {
-    //   return results.score;
-    // }
+    const score = calculate(suggestions);
 
     // Write suggestions to guidedog folder
     fs.writeFileSync(
@@ -39,10 +38,28 @@ export async function check(flag?: string) {
       },
     );
 
+    fs.writeFileSync(
+      `${DIR_PATH}/score.json`,
+      JSON.stringify(score, null, 2),
+      {
+        encoding: 'utf8',
+        flag: 'w',
+      },
+    );
+
     // Write suggestions to latest run for historical purposes
     fs.writeFileSync(
       `${RUNS_PATH}/run-${timestamp}/suggestions.json`,
       JSON.stringify(suggestions, null, 2),
+      {
+        encoding: 'utf8',
+        flag: 'w',
+      },
+    );
+
+    fs.writeFileSync(
+      `${RUNS_PATH}/run-${timestamp}/score.json`,
+      JSON.stringify(score, null, 2),
       {
         encoding: 'utf8',
         flag: 'w',
