@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import { getConfig, DIR_PATH, createNewRun, RUNS_PATH } from '@/helpers/config';
-import { analyse } from '@/helpers/Axecore';
 import { getPromptFiles, runCodeScan } from '@/helpers/CodeBaseScan';
 import { createfileLineBreakdown } from '@/helpers/FileLineBreakdown';
 import { getRepoSuggestions } from '@/helpers/ModelHandler';
@@ -23,9 +22,6 @@ export async function check(flag?: string) {
     if (!_config.framework) {
       throw new Error('guidedog.config.cjs cannot be found');
     }
-
-    // analyse to get axe-core score and violations
-    // const results = await analyse(_config.framework);
 
     const filePaths = await runCodeScan();
 

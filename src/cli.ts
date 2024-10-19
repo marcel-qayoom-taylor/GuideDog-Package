@@ -50,14 +50,7 @@ program
         apiKey = apiKeyResponse.apiKey;
       }
 
-      const answers = await inquirer.prompt({
-        type: 'list',
-        name: 'framework',
-        message: 'What framework are you using?',
-        choices: ['React', 'Angular', 'Vue', 'Other'],
-      });
-
-      await init(apiKey, answers.framework);
+      await init(apiKey);
       console.log('✅ Init completed!');
     } catch (error) {
       program.error(`❌ Error during initialization:\n${error}`);
@@ -82,7 +75,6 @@ program
       console.log('Ctrl + C to exit.');
     } catch (error) {
       program.error(`❌Error during checking:\n${error}`);
-      process.exit(0);
     }
   });
 
