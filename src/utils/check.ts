@@ -9,19 +9,9 @@ dotenv.config();
 
 export async function check(flag?: string) {
   try {
-    const _config = await getConfig();
-
-    if (!_config) {
-      throw new Error('Something wrong with configuration file');
-    }
-
     console.log('Scanning...');
 
     const { timestamp, newRunPath } = createNewRun();
-
-    if (!_config.framework) {
-      throw new Error('guidedog.config.cjs cannot be found');
-    }
 
     const filePaths = await runCodeScan();
 

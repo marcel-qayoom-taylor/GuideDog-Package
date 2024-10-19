@@ -1,12 +1,9 @@
 import { initConfig, saveAPIKey } from '@/helpers/config';
-import { createOpenAIClient } from '@/helpers/OpenaiClient';
 
 // Start Generation Here
 async function init(apiKey: string) {
   try {
-    saveAPIKey(apiKey);
-
-    createOpenAIClient();
+    await saveAPIKey(apiKey);
 
     const _config = {};
 

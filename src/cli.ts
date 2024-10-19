@@ -72,7 +72,6 @@ program
       }
 
       console.log('✅ Check completed!');
-      console.log('Ctrl + C to exit.');
     } catch (error) {
       program.error(`❌Error during checking:\n${error}`);
     }
