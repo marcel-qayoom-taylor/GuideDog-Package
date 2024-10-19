@@ -3,10 +3,10 @@ import { z } from 'zod';
 import { zodResponseFormat } from 'openai/helpers/zod.mjs';
 import wcag_data from '@/data/wcag.json';
 
-enum Impact {
-  'serious',
-  'moderate',
-  'minor',
+export enum Impact {
+  serious = 'serious',
+  moderate = 'moderate',
+  minor = 'minor',
 }
 
 export interface Issue {

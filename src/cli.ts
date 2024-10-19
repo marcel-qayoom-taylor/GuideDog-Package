@@ -60,16 +60,11 @@ program
 program
   .command('check')
   .description('Check accessibility of your project')
-  .option('-s, --score', 'Assess accessibility score')
   .action(async (options) => {
     try {
       console.log('Starting check...');
 
-      if (options.score) {
-        await check('score');
-      } else {
-        await check();
-      }
+      await check();
 
       console.log('✅ Check completed!');
     } catch (error) {
