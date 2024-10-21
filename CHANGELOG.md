@@ -1,5 +1,11 @@
 # guidedog
 
+## 1.2.0
+
+### Minor Changes
+
+- cd665c0: Launch
+
 ## 1.1.6
 
 ### Patch Changes

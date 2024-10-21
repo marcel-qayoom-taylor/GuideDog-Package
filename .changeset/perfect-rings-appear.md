@@ -1,5 +1,0 @@
----
-'@marcelqt/guidedog': minor
----
-
-Launch
