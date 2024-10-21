@@ -87,7 +87,7 @@ program
     }
   });
 
-  program
+program
   .command('fixline')
   .description('fix singular issues')
   .option('--filename <fileName>', 'input file name')
@@ -100,7 +100,6 @@ program
       console.log(error);
     }
   });
-
 
 program
   .command('fix')
