@@ -5,6 +5,7 @@ import * as dotenv from 'dotenv';
 import {
   init,
   check,
+  applySuggestion,
   applyAllSuggestions,
   applyFileSuggestions,
 } from './index';
@@ -85,6 +86,21 @@ program
       process.exit(0);
     }
   });
+
+  program
+  .command('fixline')
+  .description('fix singular issues')
+  .option('--filename <fileName>', 'input file name')
+  .option('--issue  <issue>', 'JSON string containing the issue object')
+  .action(async (options) => {
+    try {
+      const issue = JSON.parse(options.issue);
+      applySuggestion(options.filename, issue);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
 
 program
   .command('fix')
