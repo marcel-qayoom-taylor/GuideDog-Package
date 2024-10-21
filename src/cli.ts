@@ -50,14 +50,7 @@ program
         apiKey = apiKeyResponse.apiKey;
       }
 
-      const answers = await inquirer.prompt({
-        type: 'list',
-        name: 'framework',
-        message: 'What framework are you using?',
-        choices: ['React', 'Angular', 'Vue', 'Other'],
-      });
-
-      await init(apiKey, answers.framework);
+      await init(apiKey);
       console.log('✅ Init completed!');
     } catch (error) {
       program.error(`❌ Error during initialization:\n${error}`);
@@ -67,22 +60,15 @@ program
 program
   .command('check')
   .description('Check accessibility of your project')
-  .option('-s, --score', 'Assess accessibility score')
   .action(async (options) => {
     try {
       console.log('Starting check...');
 
-      if (options.score) {
-        await check('score');
-      } else {
-        await check();
-      }
+      await check();
 
       console.log('✅ Check completed!');
-      console.log('Ctrl + C to exit.');
     } catch (error) {
       program.error(`❌Error during checking:\n${error}`);
-      process.exit(0);
     }
   });
 

@@ -3,11 +3,10 @@ import { z } from 'zod';
 import { zodResponseFormat } from 'openai/helpers/zod.mjs';
 import wcag_data from '@/data/wcag.json';
 
-enum Impact {
-  'critical',
-  'serious',
-  'moderate',
-  'minor',
+export enum Impact {
+  serious = 'serious',
+  moderate = 'moderate',
+  minor = 'minor',
 }
 
 export interface Issue {
@@ -29,7 +28,7 @@ const ResponseFormat = z.object({
       issues: z.array(
         z.object({
           lineNumber: z.number(),
-          impact: z.enum(['critical', 'serious', 'moderate', 'minor']),
+          impact: z.enum(['serious', 'moderate', 'minor']),
           type: z.string(),
           improvement: z.string(),
         }),

@@ -59,7 +59,6 @@
     }
   },
   "dependencies": {
-    "@axe-core/puppeteer": "^4.10.0",
     "commander": "^12.1.0",
     "dotenv": "^16.4.5",
     "glob": "^11.0.0",
@@ -67,7 +66,6 @@
     "lodash": "^4.17.21",
     "minimatch": "^10.0.1",
     "openai": "^4.57.1",
-    "puppeteer": "^23.3.1",
     "serve": "^14.2.3",
     "zod": "^3.23.8"
   }
