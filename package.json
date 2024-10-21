@@ -38,7 +38,7 @@
     "guidedog": "./dist/cli.js"
   },
   "scripts": {
-    "build": "tsup && chmod +x dist/cli.js",
+    "build": "tsup && (chmod +x dist/cli.js || icacls dist/cli.js /grant Everyone:F)",
     "start": "tsx src/cli.ts",
     "ci": "npm run build && npm run check-format && npm run check-exports && npm run lint",
     "format": "prettier --write .",
