@@ -51,7 +51,7 @@ export const getLatestSuggestion = async (): Promise<Suggestion[] | null> => {
     const patterns = [`${RUNS_PATH}/run-*/suggestions.json`];
 
     const suggetionsPaths = await glob(patterns);
-    console.log(suggetionsPaths);
+
     const latestSuggestionsPath = suggetionsPaths
       .sort((a, b) => {
         const timestampA = extractTimestampFromPath(a);
@@ -65,7 +65,7 @@ export const getLatestSuggestion = async (): Promise<Suggestion[] | null> => {
     const fileContent = fs.readFileSync(latestSuggestionsPath, 'utf-8');
 
     const latestSuggestions: Suggestion[] = JSON.parse(fileContent);
-    console.log(latestSuggestionsPath);
+
     return latestSuggestions;
   } catch (error) {
     throw error;
