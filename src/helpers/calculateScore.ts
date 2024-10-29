@@ -9,7 +9,7 @@ export const calculate = (suggestions: Suggestion[]): Score => {
   let p2 = 0; // Serious issues
   let p1 = 0; // Moderate issues
   let p0 = 0; // Minor issues
-  console.log(suggestions);
+
   suggestions.forEach((file) => {
     file.issues.forEach((issue) => {
       switch (issue.impact) {
@@ -23,8 +23,6 @@ export const calculate = (suggestions: Suggestion[]): Score => {
           p0++;
           break;
       }
-
-      console.log(p0, p1, p2);
     });
   });
 
