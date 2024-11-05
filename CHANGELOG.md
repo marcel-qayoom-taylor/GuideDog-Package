@@ -1,5 +1,11 @@
 # guidedog
 
+## 1.3.4
+
+### Patch Changes
+
+- 3b7bb82: Small fixes
+
 ## 1.3.3
 
 ### Patch Changes

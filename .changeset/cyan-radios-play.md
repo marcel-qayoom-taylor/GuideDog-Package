@@ -1,5 +1,0 @@
----
-'guidedog': patch
----
-
-Small fixes
