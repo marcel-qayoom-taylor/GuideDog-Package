@@ -1,5 +1,11 @@
 # guidedog
 
+## 1.3.3
+
+### Patch Changes
+
+- 97b68c5: Fix readme
+
 ## 1.3.2
 
 ### Patch Changes
