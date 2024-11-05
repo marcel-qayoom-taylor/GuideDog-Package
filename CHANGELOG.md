@@ -1,5 +1,11 @@
 # guidedog
 
+## 1.3.0
+
+### Minor Changes
+
+- 197087f: Publishing bug
+
 ## 1.2.0
 
 ### Minor Changes

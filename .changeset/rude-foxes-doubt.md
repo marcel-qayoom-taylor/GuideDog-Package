@@ -1,5 +1,0 @@
----
-'guidedog': minor
----
-
-Publishing bug
