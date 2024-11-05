@@ -1,0 +1,5 @@
+---
+'guidedog': patch
+---
+
+Add readme
