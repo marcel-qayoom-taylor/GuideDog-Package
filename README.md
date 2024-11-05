@@ -50,14 +50,13 @@ Check the accessibility of your project, receive an rating and suggestions.
 guidedog fix [options]
 ```
 
-Apply fixes to your codebase. 
+Apply fixes to your codebase.
 
 Optional flags:
 
 --wholeRepo: Applies fixes to the entire repository
 
 --file "fileName": Applies fixes only to the specified file
-
 
 ## Contributing
 
