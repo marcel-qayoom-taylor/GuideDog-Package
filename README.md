@@ -24,25 +24,40 @@ npm install guidedog
 
 You can interact with Guidedog through the command line. Below are the available commands:
 
+#### Init
+
 ```bash
-guidedog init
+guidedog init [options]
 ```
 
-Initialize the accessibility configuration for your repository.
+Initialize the accessibility configuration for your repository and prompts you for your OpenAI API key.
 
-This command prompts you for your OpenAI API key and the framework you are using (React, Angular, Vue, or Other).
+Optional flags:
+
+--apiKey "key": Adds the API key automatically (if not provided, will use .env or prompt user)
+
+#### Check
 
 ```bash
-guidedog check [options]
+guidedog check
 ```
 
 Check the accessibility of your project, receive an rating and suggestions.
 
+#### Fix
+
 ```bash
-guidedog fix
+guidedog fix [options]
 ```
 
-Note: This command currently applies fixes to the entire repository. Specific file fixes will be implemented in future updates.
+Apply fixes to your codebase. 
+
+Optional flags:
+
+--wholeRepo: Applies fixes to the entire repository
+
+--file "fileName": Applies fixes only to the specified file
+
 
 ## Contributing
 
