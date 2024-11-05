@@ -1,5 +1,11 @@
 # guidedog
 
+## 1.3.2
+
+### Patch Changes
+
+- dfd9379: Fix readme
+
 ## 1.3.1
 
 ### Patch Changes

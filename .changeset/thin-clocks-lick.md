@@ -1,5 +1,0 @@
----
-'guidedog': patch
----
-
-Fix readme
